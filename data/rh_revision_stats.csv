@@ -1,0 +1,7 @@
+revision,commit,committer_date_utc,label,lean_files,total_lines,body_lines,import_lines,theorem_lemma_lines,lean_toolchain
+40e56bab,40e56bab026,2026-11-20T14:36:09Z,original archive,174793,17374215,14621937,909822,813194,leanprover/lean4:v4.33.1
+7cce738,7cce738ba71,2026-11-22T11:08:58Z,2026-11-22 snapshot (after #93),163900,16563088,13946704,842923,780139,leanprover/lean4:v4.33.1
+14f383e5ede,14f383e5ede,2026-11-22T14:09:32Z,"#66: Lean 4.36, module system, unreachable files deleted",149104,15179048,12306612,841881,663842,leanprover/lean4:v4.36.0
+ecc801f3f81^,f38c099ec60,2026-11-23T22:22:05Z,after #185 (Lean 4.37.0-rc1) and #221,147945,20569125,12047636,6428170,659933,leanprover/lean4:v4.37.0-rc1
+ecc801f3f81,ecc801f3f81,2026-11-23T22:59:48Z,"#324: thin wrappers deleted, modules clumped",61935,17249054,12431988,2950339,637897,leanprover/lean4:v4.37.0-rc1
+75e2012dcc6,75e2012dcc6,2026-11-25T07:24:48Z,head,59254,15351223,11577635,2027398,583779,leanprover/lean4:v4.37.0-rc1

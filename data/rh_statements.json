@@ -1,0 +1,66 @@
+{
+  "definition": "sha256 of the statement text between the theorem name and `:=`, whitespace collapsed, read from src/Main.lean",
+  "reference_revision": "40e56bab",
+  "revisions": {
+    "40e56bab026": {
+      "hashes": {
+        "riemannHypothesis": "8e653f825ec3f2567dd40abcccb7fa944e71ad462e5760ae7807a1bec73ad5e9",
+        "riemannZeta_eq_zero_re": "08563557a65f0d2c5536f5ba29d1c758daea654cf9c7d5ca372aaad2b90a214e",
+        "LFunction_ne_zero_of_half_lt_re": "cba53efe34b745316ff0745ff6c4ba9dc202f92f8142eabd91fce9fde088d94e",
+        "LFunction_eq_zero_re": "a66a3c2f8ff11b865288899e9f82c18e3e686d86e5ad3943796085a245e7bd22",
+        "LFunction_eq_zero_re_of_isPrimitive": "faacbbaee4c49576853b4f9446586932492d2a65dde290e91e21ced36c4a7bbe"
+      },
+      "all_equal_to_reference": true
+    },
+    "7cce738ba71": {
+      "hashes": {
+        "riemannHypothesis": "8e653f825ec3f2567dd40abcccb7fa944e71ad462e5760ae7807a1bec73ad5e9",
+        "riemannZeta_eq_zero_re": "08563557a65f0d2c5536f5ba29d1c758daea654cf9c7d5ca372aaad2b90a214e",
+        "LFunction_ne_zero_of_half_lt_re": "cba53efe34b745316ff0745ff6c4ba9dc202f92f8142eabd91fce9fde088d94e",
+        "LFunction_eq_zero_re": "a66a3c2f8ff11b865288899e9f82c18e3e686d86e5ad3943796085a245e7bd22",
+        "LFunction_eq_zero_re_of_isPrimitive": "faacbbaee4c49576853b4f9446586932492d2a65dde290e91e21ced36c4a7bbe"
+      },
+      "all_equal_to_reference": true
+    },
+    "14f383e5ede": {
+      "hashes": {
+        "riemannHypothesis": "8e653f825ec3f2567dd40abcccb7fa944e71ad462e5760ae7807a1bec73ad5e9",
+        "riemannZeta_eq_zero_re": "08563557a65f0d2c5536f5ba29d1c758daea654cf9c7d5ca372aaad2b90a214e",
+        "LFunction_ne_zero_of_half_lt_re": "cba53efe34b745316ff0745ff6c4ba9dc202f92f8142eabd91fce9fde088d94e",
+        "LFunction_eq_zero_re": "a66a3c2f8ff11b865288899e9f82c18e3e686d86e5ad3943796085a245e7bd22",
+        "LFunction_eq_zero_re_of_isPrimitive": "faacbbaee4c49576853b4f9446586932492d2a65dde290e91e21ced36c4a7bbe"
+      },
+      "all_equal_to_reference": true
+    },
+    "f38c099ec60": {
+      "hashes": {
+        "riemannHypothesis": "8e653f825ec3f2567dd40abcccb7fa944e71ad462e5760ae7807a1bec73ad5e9",
+        "riemannZeta_eq_zero_re": "08563557a65f0d2c5536f5ba29d1c758daea654cf9c7d5ca372aaad2b90a214e",
+        "LFunction_ne_zero_of_half_lt_re": "cba53efe34b745316ff0745ff6c4ba9dc202f92f8142eabd91fce9fde088d94e",
+        "LFunction_eq_zero_re": "a66a3c2f8ff11b865288899e9f82c18e3e686d86e5ad3943796085a245e7bd22",
+        "LFunction_eq_zero_re_of_isPrimitive": "faacbbaee4c49576853b4f9446586932492d2a65dde290e91e21ced36c4a7bbe"
+      },
+      "all_equal_to_reference": true
+    },
+    "ecc801f3f81": {
+      "hashes": {
+        "riemannHypothesis": "8e653f825ec3f2567dd40abcccb7fa944e71ad462e5760ae7807a1bec73ad5e9",
+        "riemannZeta_eq_zero_re": "08563557a65f0d2c5536f5ba29d1c758daea654cf9c7d5ca372aaad2b90a214e",
+        "LFunction_ne_zero_of_half_lt_re": "cba53efe34b745316ff0745ff6c4ba9dc202f92f8142eabd91fce9fde088d94e",
+        "LFunction_eq_zero_re": "a66a3c2f8ff11b865288899e9f82c18e3e686d86e5ad3943796085a245e7bd22",
+        "LFunction_eq_zero_re_of_isPrimitive": "faacbbaee4c49576853b4f9446586932492d2a65dde290e91e21ced36c4a7bbe"
+      },
+      "all_equal_to_reference": true
+    },
+    "75e2012dcc6": {
+      "hashes": {
+        "riemannHypothesis": "8e653f825ec3f2567dd40abcccb7fa944e71ad462e5760ae7807a1bec73ad5e9",
+        "riemannZeta_eq_zero_re": "08563557a65f0d2c5536f5ba29d1c758daea654cf9c7d5ca372aaad2b90a214e",
+        "LFunction_ne_zero_of_half_lt_re": "cba53efe34b745316ff0745ff6c4ba9dc202f92f8142eabd91fce9fde088d94e",
+        "LFunction_eq_zero_re": "a66a3c2f8ff11b865288899e9f82c18e3e686d86e5ad3943796085a245e7bd22",
+        "LFunction_eq_zero_re_of_isPrimitive": "faacbbaee4c49576853b4f9446586932492d2a65dde290e91e21ced36c4a7bbe"
+      },
+      "all_equal_to_reference": true
+    }
+  }
+}
