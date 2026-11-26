@@ -1,0 +1,157 @@
+{
+ "theorems_before": 654,
+ "candidates": 419,
+ "inlined": 412,
+ "theorems_after": 242,
+ "rounds": 6,
+ "not_inlined_reasons": {
+  "used by N declarations": 196,
+  "user is a def": 27,
+  "user is in a different namespace or open scope and has a term proof": 4,
+  "headline": 5,
+  "has attributes": 3,
+  "reverted": 7
+ },
+ "heartbeat_raises": {
+  "proposedFamilyFree_sixteenth_power_host_bound": 800000,
+  "pairCoordinateConditionalEntropy_empirical_bound": 400000,
+  "twoDegenerateExtremalCounterexample": 3200000
+ },
+ "max_nesting": 15,
+ "log": [
+  {
+   "round": 1,
+   "decl": "symplecticLinesOnPoint_card",
+   "action": "revert",
+   "in": "symplecticIncidence_card_by_points",
+   "error": "`simp` made no progress ",
+   "source_line": "simp_rw [symplecticLinesOnPoint_card]"
+  },
+  {
+   "round": 1,
+   "decl": "symplecticIncidence_card_by_lines",
+   "action": "revert",
+   "in": "quadrangle_uniform_lower_of_prime_power_avoidance",
+   "error": "`simp` made no progress ",
+   "source_line": "simp_rw [symplecticPointsOnLine_card]"
+  },
+  {
+   "round": 1,
+   "decl": "proposedFamilyFree_sixteenth_power_host_bound",
+   "action": "heartbeats",
+   "value": 400000
+  },
+  {
+   "round": 1,
+   "decl": "sqrt_three_pos",
+   "action": "revert",
+   "in": "entropyWindow_eq_certifiedWindowWidth",
+   "error": "Unknown identifier `sqrt_three_pos.ne'` "
+  },
+  {
+   "round": 1,
+   "decl": "pairCoordinateConditionalEntropy_empirical_bound",
+   "action": "heartbeats",
+   "value": 400000
+  },
+  {
+   "round": 1,
+   "decl": "exists_entropy_exclusion_base",
+   "action": "revert",
+   "in": "twoDegenerateExtremalCounterexample",
+   "error": "Unknown identifier `exists_entropy_exclusion_base` "
+  },
+  {
+   "round": 1,
+   "decl": "exists_actualPairLayer_exclusion_parameters",
+   "action": "revert",
+   "in": "twoDegenerateExtremalCounterexample",
+   "error": "Tactic `rcases` failed: `x✝ : ?m.3863` is not an inductive datatype ",
+   "source_line": "obtain ⟨baseSize, hbase, hbase_conditions⟩ :="
+  },
+  {
+   "round": 2,
+   "decl": "symplecticPointsOnLine_card",
+   "action": "revert",
+   "in": "symplecticIncidence_card_by_lines",
+   "error": "`simp` made no progress ",
+   "source_line": "simp_rw [symplecticPointsOnLine_card]"
+  },
+  {
+   "round": 2,
+   "decl": "proposedFamilyFree_sixteenth_power_host_bound",
+   "action": "heartbeats",
+   "value": 800000
+  },
+  {
+   "round": 2,
+   "decl": "exists_entropy_exclusion_depth",
+   "action": "revert",
+   "in": "exists_actualPairLayer_exclusion_parameters",
+   "error": "Unknown identifier `exists_entropy_exclusion_depth` "
+  },
+  {
+   "round": 2,
+   "decl": "twoDegenerateExtremalCounterexample",
+   "action": "heartbeats",
+   "value": 400000
+  },
+  {
+   "round": 3,
+   "decl": "gluedJBase_injective",
+   "action": "revert",
+   "in": "proposedFamilyFree_sixteenth_power_host_bound",
+   "error": "`simp` failed: maximum number of steps exceeded ",
+   "source_line": "simp_all [gluedJBase]"
+  },
+  {
+   "round": 3,
+   "decl": "twoDegenerateExtremalCounterexample",
+   "action": "heartbeats",
+   "value": 800000
+  },
+  {
+   "round": 4,
+   "decl": "badFourPathTripleWitness_card",
+   "action": "revert",
+   "in": "proposedFamilyFree_sixteenth_power_host_bound",
+   "error": "`simp` made no progress ",
+   "source_line": "Finset.card_powersetCard, commonSecondNeighborFinset_card]"
+  },
+  {
+   "round": 4,
+   "decl": "twoDegenerateExtremalCounterexample",
+   "action": "heartbeats",
+   "value": 1600000
+  },
+  {
+   "round": 5,
+   "decl": "commonSecondNeighborFinset_card",
+   "action": "revert",
+   "in": "badFourPathTripleWitness_card",
+   "error": "`simp` made no progress ",
+   "source_line": "Finset.card_powersetCard, commonSecondNeighborFinset_card]"
+  },
+  {
+   "round": 5,
+   "decl": "twoDegenerateExtremalCounterexample",
+   "action": "heartbeats",
+   "value": 3200000
+  },
+  {
+   "round": "retry",
+   "decl": "symplecticIncidence_card_by_lines",
+   "action": "reinstated"
+  },
+  {
+   "round": "retry",
+   "decl": "exists_actualPairLayer_exclusion_parameters",
+   "action": "reinstated"
+  },
+  {
+   "round": "retry",
+   "decl": "badFourPathTripleWitness_card",
+   "action": "reinstated"
+  }
+ ]
+}

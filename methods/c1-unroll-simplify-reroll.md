@@ -39,6 +39,8 @@
 
 | 规模 × 来源 | 数字 | 标记 |
 |---|---|---|
+| 单个文件 × 模型生成的证明（`openai/ten-proofs` 的 3 千行与 1.7 万行文件） | 展开完全由脚本完成（`scripts/refold/unroll.py`，带构建反馈）：定理 96 → 41、654 → 242，代码行不变；最长证明 86 → 1,071 行、172 → 4,071 行；较大的文件构建 36 → 140 秒，3 个声明要提高心跳上限。[small-ramsey](../experiments/small-ramsey/README.md)、[small-compactness](../experiments/small-compactness/README.md) | 本仓库测 |
+| 单个文件 × 模型生成的证明（3 千行，全流程） | 2,902 → 589 代码行（4.9 倍），定理 96 → 9，定义 42 → 3；展开占命题个数缩减的 36%，其余来自随后的重写。[small-ramsey](../experiments/small-ramsey/README.md) | 本仓库测 |
 | 证明集合 × 模型生成（Leanify 的两组证明） | 证明项大小压缩 94.2%、最高 99.2%；越往后的阶段非平凡可复用引理越多（与抽引理同方向，不单是本路线） [P29] | 他人报告 |
 | 仓库 × LeanLean 的 64 个真实仓库 | 最佳模型平均压缩分 48.3%，大头来自重组依赖；展开再分块单独占多少未报告 [P30] | 他人报告 |
 | 库 × Mathlib | 只有一个声明的文件 3.7%（可分块余地的间接指标，见 [profiles](../cases/profiles.md)） | 本仓库测 |

@@ -1,0 +1,80 @@
+{
+ "theorems_before": 96,
+ "candidates": 57,
+ "inlined": 55,
+ "theorems_after": 41,
+ "rounds": 5,
+ "not_inlined_reasons": {
+  "used by N declarations": 25,
+  "user is a def": 10,
+  "headline": 4,
+  "reverted": 2
+ },
+ "heartbeat_raises": {
+  "allColourPaletteRamsey_exponential_bound_sharp": 400000
+ },
+ "max_nesting": 10,
+ "log": [
+  {
+   "round": 1,
+   "decl": "colourGraph_colorable",
+   "action": "revert",
+   "in": "allColourPaletteRamsey_exponential_bound_sharp",
+   "error": "Application type mismatch: The argument heq has type (if h : colour ∈ certificate.palette i then Fin.last j else (certificate.label i colour ⋯ u).castSucc) = if h : colour ∈ certificate.palette i then Fin.last j else (certificate.label i colour ⋯ v).castSucc but is expected to have type (certificate.label i colour hmissing u).castSucc = (certificate.label i colour hmissing v).castSucc in the appli",
+   "source_line": "exact fun heq => hproper (Fin.castSucc_inj.mp heq)"
+  },
+  {
+   "round": 2,
+   "decl": "allColourPaletteRamsey_exponential_bound_sharp",
+   "action": "heartbeats",
+   "value": 400000
+  },
+  {
+   "round": 3,
+   "decl": "exists_recursivePaletteColouring_fin",
+   "action": "revert",
+   "in": "allColourPaletteRamsey_exponential_bound_sharp",
+   "error": "Invalid field `noMonochromaticTriangle`: The environment does not contain `ErdosProblems.MulticolourTriangleRamsey.PaletteBlockCertificate.noMonochromaticTriangle`, so it is not possible to project the field `noMonochromaticTriangle` from an expression certificate of type PaletteBlockCertificate (recursivePaletteColouring C hC hj family hcard hseparated f g hcover) j",
+   "source_line": "certificate.noMonochromaticTriangle"
+  },
+  {
+   "round": 4,
+   "decl": "colorable_pullback_embedding",
+   "action": "revert",
+   "in": "exists_recursivePaletteColouring_fin",
+   "error": "Invalid field `noMonochromaticTriangle`: The environment does not contain `ErdosProblems.MulticolourTriangleRamsey.PaletteBlockCertificate.noMonochromaticTriangle`, so it is not possible to project the field `noMonochromaticTriangle` from an expression certificate of type PaletteBlockCertificate (recursivePaletteColouring C hC hj family hcard hseparated f g hcover) j",
+   "source_line": "certificate.noMonochromaticTriangle"
+  },
+  {
+   "round": 4,
+   "decl": "noMonochromaticTriangle",
+   "action": "revert",
+   "in": "exists_recursivePaletteColouring_fin",
+   "error": "Invalid field `noMonochromaticTriangle`: The environment does not contain `ErdosProblems.MulticolourTriangleRamsey.PaletteBlockCertificate.noMonochromaticTriangle`, so it is not possible to project the field `noMonochromaticTriangle` from an expression certificate of type PaletteBlockCertificate (recursivePaletteColouring C hC hj family hcard hseparated f g hcover) j",
+   "source_line": "certificate.noMonochromaticTriangle"
+  },
+  {
+   "round": 4,
+   "decl": "exists_coordinate_covering",
+   "action": "revert",
+   "in": "exists_recursivePaletteColouring_fin",
+   "error": "Invalid field `noMonochromaticTriangle`: The environment does not contain `ErdosProblems.MulticolourTriangleRamsey.PaletteBlockCertificate.noMonochromaticTriangle`, so it is not possible to project the field `noMonochromaticTriangle` from an expression certificate of type PaletteBlockCertificate (recursivePaletteColouring C hC hj family hcard hseparated f g hcover) j",
+   "source_line": "certificate.noMonochromaticTriangle"
+  },
+  {
+   "round": "retry",
+   "decl": "exists_recursivePaletteColouring_fin",
+   "action": "reinstated"
+  },
+  {
+   "round": "retry",
+   "decl": "colorable_pullback_embedding",
+   "action": "reinstated"
+  },
+  {
+   "round": "retry",
+   "decl": "exists_coordinate_covering",
+   "action": "reinstated"
+  }
+ ]
+}

@@ -37,6 +37,7 @@
 
 | 规模 × 来源 | 数字 | 标记 |
 |---|---|---|
+| 单个文件 × 模型生成的证明（3 千行） | 定义 42 → 3（只剩标题陈述用到的三个）：标号、嵌入、证书结构体等具名数据层在换成函数层面的归纳后全部消失；这发生在换论证的阶段，不是单独的去包装步骤。[small-ramsey](../experiments/small-ramsey/README.md) | 本仓库测 |
 | 库 × Mathlib | 命名 `Prop` 定义每千行代码 0.8 个（[profiles](../cases/profiles.md) 的宽口径） | 本仓库测 |
 | 仓库 × 人写研究仓库（FLT、Carleson、PrimeNumberTheoremAnd [D19]–[D21]） | 每千行 0.3–0.6 个 | 本仓库测 |
 | 大仓库 × 模型生成（RH） | 每千行 6.0 个（宽口径）；按精确形式 `def X : Prop :=` 数：原始 65,318 个，可读版 274 个，紧凑版 4 个 | 本仓库测（[grh-compact-vs-original](../cases/rh/grh-compact-vs-original.md)） |

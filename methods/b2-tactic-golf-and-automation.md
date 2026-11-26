@@ -38,6 +38,7 @@
 
 | 规模 × 来源 | 数字 | 标记 |
 |---|---|---|
+| 单个文件 × 模型生成的证明（3 千行） | 逐块盲试一组收尾策略（`grind`、`simp_all`、`omega` 等，以及带上原证明块里出现的定理名的版本）：219 个多行证明块里 24 个能被一行替换，省 3.0% 的代码行；一次探测约 3,000 次尝试、30 分钟以上。[small-ramsey](../experiments/small-ramsey/README.md) | 本仓库测 |
 | 单个定理 × 模型生成的竞赛证明 | LeanPolish 节省 token：Goedel-Prover 证明 20.0%，miniF2F 22.6%，PutnamBench 13.5% [D2] | 他人报告 |
 | 单个定理 × 模型生成的竞赛证明 | LeanPolish 不动点与 AXLE 叠加：miniF2F 29.8% / 27.1% → 35.9%；PutnamBench 16.1% / 25.6% → 28.5% [D2] | 他人报告 |
 | 单个定理 × 模型生成的长证明（前沿证明器） | AxiomProver 证明 1.3%–1.8%，Aristotle 的 IMO 题 0.3%–0.5% [D2] | 他人报告 |

@@ -1,0 +1,138 @@
+{
+ "blocks": 219,
+ "closed_by_automation": 24,
+ "outermost": 24,
+ "applied": 24,
+ "undone_after_build": [],
+ "rounds": 1,
+ "lines_removed": 87,
+ "by_tactic": {
+  "grind": 10,
+  "simp_all": 7,
+  "aesop": 3,
+  "simp": 3,
+  "omega": 1
+ },
+ "replacements": [
+  {
+   "line": 15,
+   "block_lines": 19,
+   "tactic": "aesop"
+  },
+  {
+   "line": 43,
+   "block_lines": 2,
+   "tactic": "simp [ErdosProblems.MulticolourTriangleRamsey.labelGraph_pullback_embedding, SimpleGraph.map_comap_le]"
+  },
+  {
+   "line": 75,
+   "block_lines": 6,
+   "tactic": "aesop"
+  },
+  {
+   "line": 289,
+   "block_lines": 6,
+   "tactic": "aesop"
+  },
+  {
+   "line": 339,
+   "block_lines": 3,
+   "tactic": "grind [ErdosProblems.MulticolourTriangleRamsey.triangleRamseyNumber_succ_le]"
+  },
+  {
+   "line": 389,
+   "block_lines": 5,
+   "tactic": "grind"
+  },
+  {
+   "line": 460,
+   "block_lines": 2,
+   "tactic": "simp_all"
+  },
+  {
+   "line": 463,
+   "block_lines": 4,
+   "tactic": "grind"
+  },
+  {
+   "line": 468,
+   "block_lines": 2,
+   "tactic": "grind"
+  },
+  {
+   "line": 473,
+   "block_lines": 2,
+   "tactic": "grind"
+  },
+  {
+   "line": 678,
+   "block_lines": 2,
+   "tactic": "simp"
+  },
+  {
+   "line": 737,
+   "block_lines": 2,
+   "tactic": "grind"
+  },
+  {
+   "line": 799,
+   "block_lines": 2,
+   "tactic": "grind"
+  },
+  {
+   "line": 807,
+   "block_lines": 11,
+   "tactic": "grind"
+  },
+  {
+   "line": 1169,
+   "block_lines": 2,
+   "tactic": "simp_all"
+  },
+  {
+   "line": 1174,
+   "block_lines": 2,
+   "tactic": "simp_all"
+  },
+  {
+   "line": 1408,
+   "block_lines": 2,
+   "tactic": "grind"
+  },
+  {
+   "line": 1418,
+   "block_lines": 2,
+   "tactic": "simp_all"
+  },
+  {
+   "line": 1450,
+   "block_lines": 2,
+   "tactic": "simp_all"
+  },
+  {
+   "line": 1464,
+   "block_lines": 2,
+   "tactic": "simp_all"
+  },
+  {
+   "line": 1615,
+   "block_lines": 2,
+   "tactic": "simp [Finset.prod_ite, Finset.filter_notMem_eq_sdiff, Finset.card_sdiff_of_subset]"
+  },
+  {
+   "line": 1729,
+   "block_lines": 3,
+   "tactic": "simp_all"
+  },
+  {
+   "line": 1840,
+   "block_lines": 3,
+   "tactic": "omega"
+  },
+  {
+   "line": 1846,
+   "block_lines": 2,
+   "tactic": "grind"
+  }
+ ]
+}

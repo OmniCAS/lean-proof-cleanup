@@ -4,6 +4,7 @@
 
 | 文档 | 内容 |
 |---|---|
+| [experiment-infra.md](experiment-infra.md) | 我们自己的实验（`../experiments/`）的环境与工作流：两台机器、工具链与源码的校验、无网络构建、四条闸门、各阶段的脚本、整库构建的实测 |
 | [layered-plan.md](layered-plan.md) | 分层方案：单个定理、单个文件、小仓库、大仓库各自的目标、手段、语义不变的验证（G0–G6 闸门）、自动化程度，以及对中小型研究仓库的判断 |
 | [ideas-and-engineering.md](ideas-and-engineering.md) | 14 条优化思路的排序（来源、粒度、收益、正确性保证），以及仓库级的工程流水线：依赖图、去重、import、批处理、增量与分布式构建、守卫、合并顺序、度量 |
 | [survey.md](survey.md) | LeanPolish 与同期工作；Lean / Mathlib v4.35 自带的清理与核验工具 |
