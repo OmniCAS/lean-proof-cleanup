@@ -39,7 +39,7 @@
 |---|---|---|
 | 原始 | 构建、`#print axioms`、逐模块重放、跨机器导出比对、nanoda、con-leche/con-ron `--compare`、Lean 默认与 paranoid 内核、`lake comparator` 全流程都通过 | 他人报告 |
 | `alpoge` 线 | 只有 CI 构建与每批的机械检查；没有报告过端到端核验 | 他人报告的缺失 |
-| 可读版（= 新 `main` 起点） | 构建、axioms、803/803 重放、导出比对、全部外部内核、`lake comparator` 通过；单一流程的 `--paranoid` 仍在跑 | 他人报告（02:13 UTC 版） |
+| 可读版（= 新 `main` 起点） | 构建、axioms、803/803 重放、导出比对、全部外部内核、`lake comparator` 通过；`lake comparator --paranoid` 在较大的机器上给出 "Your solution is okay!"（4 小时 9 分 59 秒，其中 lean4lean 约 2 小时 40 分）；在较小的机器上因 lean4lean 需要约 332 GB 内存而被停止、没有结论（不是拒绝） | 他人报告（02:50 UTC 版，全部检查结束） |
 | 紧凑版 | 上述全部通过，`lake comparator --paranoid` 在两台机器上通过 | 他人报告（同上） |
 
 成本参照：原始版本的 paranoid 内核跑了 68 小时 53 分 [z643222049]；可读版的 lean4lean 用了 2 小时 35 分、峰值 332 GB 内存 [D18]。

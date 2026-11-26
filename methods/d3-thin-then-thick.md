@@ -27,7 +27,7 @@
 
 ## 6. 正确性靠什么保证
 
-两版各自过完整闸门：MIT 对两版都做了构建、`#print axioms`、逐模块重放、跨机器导出比对、多个独立内核与 `--compare`；紧凑版的 `lake comparator --paranoid` 在两台机器上通过，可读版的普通 `lake comparator` 通过（MIT 页 2026-11-26 02:13 UTC 版） [D18]。
+两版各自过完整闸门：MIT 对两版都做了构建、`#print axioms`、逐模块重放、跨机器导出比对、多个独立内核与 `--compare`；`lake comparator --paranoid` 对两版都给出 "Your solution is okay!"：紧凑版在两台机器上独立通过，可读版在较大的机器上通过（lean4lean 需约 332 GB 内存，较小的机器上停止、没有结论）（MIT 页 2026-11-26 02:50 UTC 版，全部检查结束） [D18]。
 
 ## 7. 效果
 

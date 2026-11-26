@@ -36,8 +36,8 @@
 | 原始版本的依赖闭包 | 1,061,400 个声明中 804,912 个被用到（75.8%） | 他人报告 | [D8] |
 | 机械路线的合计上限 | 约两到三倍 | 估计 | `docs/grh-compact-vs-original.md` §3 |
 | 导出大小：原始 / 可读版 / 紧凑版 | 61.6 GB / 4.49 GB / 5.17 GB | 他人报告 | [D17]、[D18] |
-| 紧凑版的完整核验 | MIT：六个检查器接受，`lake comparator --paranoid` 两台机器通过 | 他人报告 | [D18]（02:13 UTC 版） |
-| 紧凑版的本机断网构建 | 9,843 个任务零错误（12 核、16 GB，约 2 小时 33 分；Mathlib 与依赖为预建副本，只编译项目模块）；`#print axioms` 只有三条标准公理；导出哈希与 MIT 的比对进行中 | 本仓库测 | `docs/grh-compact-reliability.md` §6 |
+| 两个短版本的完整核验 | MIT：全部检查结束且都通过；`lake comparator --paranoid` 紧凑版在两台机器上独立通过，可读版在较大的机器上通过（约 4 小时 10 分；lean4lean 需约 332 GB 内存，较小的机器上停止、没有结论） | 他人报告 | [D18]（02:50 UTC 版） |
+| 紧凑版的本机断网构建 | 9,843 个任务零错误（12 核、16 GB，约 2 小时 33 分；Mathlib 与依赖为预建副本，只编译项目模块）；`#print axioms` 只有三条标准公理；本机完整导出因 16 GB 内存不够没有完成，所以没有本机的独立内核检查 | 本仓库测 | `docs/grh-compact-reliability.md` §6 |
 | 清理后的 `alpoge` 线的端到端核验 | 截至 2026-11-26 无报告 | 他人报告的缺失 | `docs/rh-community-cleanup.md` §0 |
 | LeanPolish 节省的 token | Mathlib 子集 0.53%，Goedel-Prover 证明 20.0%，miniF2F 22.6% | 他人报告 | [D2] |
 | LeanLean：64 个真实仓库、12 小时 | 最强模型平均压缩分 48.3%，大头来自依赖重组 | 他人报告（摘要） | [P30] |

@@ -138,7 +138,7 @@
 | D15 | Lean 分布式构建 | [OmniCAS/lean-distributed-build](https://github.com/OmniCAS/lean-distributed-build) | 全文 |
 | D16 | grh-lean：可读版 `grh/` 与紧凑版 `grh-compact/`（Luke Sernau 与 Anthropic 同事，借助 Claude；Apache-2.0，Copyright 2026 Anthropic, PBC） | [lsernau/grh-lean](https://github.com/lsernau/grh-lean)，提交 `72fead1` | 全文（两版源码统计、README、NOTICE、GUIDE、ATTRIBUTION） |
 | D17 | MIT 对原始版本的核验页（Andrew Sutherland） | [math.mit.edu/~drew/grh](https://math.mit.edu/~drew/grh/) | 摘要（按版本追踪整理） |
-| D18 | MIT 对两个短版本的核验页（Andrew Sutherland） | [math.mit.edu/~drew/shortgrh](https://math.mit.edu/~drew/shortgrh/) | 相关段落（页面 2026-11-26 02:13 UTC 版，02:48 UTC 读取） |
+| D18 | MIT 对两个短版本的核验页（Andrew Sutherland） | [math.mit.edu/~drew/shortgrh](https://math.mit.edu/~drew/shortgrh/) | 相关段落（页面 2026-11-26 02:50 UTC 版，全部检查已结束；03:09 UTC 读取） |
 
 ## C 社区记录
 
