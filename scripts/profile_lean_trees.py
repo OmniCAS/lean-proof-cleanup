@@ -1,7 +1,9 @@
-"""Compare Lean source trees: line classes, tactic use, declaration names, proof lengths.
+"""Profile Lean source trees: line classes, declarations, tactic use, option overrides, names.
 
-Usage: python3 -I compare_versions.py OUT.json LABEL=SRC_DIR [LABEL=SRC_DIR ...]
-Reads .lean files only; nothing is executed. The last tree may be large (streamed file by file).
+Usage: python3 -I profile_lean_trees.py OUT.json LABEL=SRC_DIR [LABEL=SRC_DIR ...]
+Reads .lean files only; nothing is executed. Put the largest tree last: it is streamed file by
+file and is the one for which the locations of the other trees' names are recorded.
+The output lists declaration names; reduce it with summarize_profiles.py before publishing.
 """
 import collections
 import json
@@ -20,6 +22,8 @@ TACTICS = ["grind", "simp", "simp_all", "simpa", "omega", "linarith", "nlinarith
            "mod_cast", "specialize", "by_cases", "subst", "filter_upwards", "trans", "nth_rewrite", "erw",
            "native_decide", "sorry", "by", "fun", "set_option"]
 TAC_RE = re.compile(r"(?<![\w.'])(" + "|".join(sorted(TACTICS, key=len, reverse=True)) + r")(?![\w'?!])")
+PROP_DEF_RE = re.compile(r"\bdef\s+\S+.*:\s*Prop\s*(:=|$)")
+OPTION_RE = re.compile(r"set_option\s+(maxHeartbeats|maxRecDepth|synthInstance\.\S+|backward\.\S+)\b")
 STRUCT_RE = re.compile(r"^(namespace|end|open|section|variable|universe|noncomputable section|public section|"
                        r"set_option|attribute|export|include|omit|@\[expose\] public section|module)\b")
 
@@ -68,6 +72,8 @@ def scan(root, keep_names=None):
                 if re.match(r"^(public |private |meta )*import\b", t):
                     st["import_lines"] += 1
                     continue
+                if OPTION_RE.search(t):
+                    st["option_overrides"] += 1
                 if STRUCT_RE.match(t):
                     st["scaffold_lines"] += 1
                     continue
@@ -80,6 +86,8 @@ def scan(root, keep_names=None):
                         proof_len[min(n_, 200) // 5 * 5 if n_ > 10 else n_] += 1
                     kind, name = m.group(1), m.group(2)
                     kinds[kind] += 1
+                    if kind == "def" and PROP_DEF_RE.search(l):
+                        st["prop_defs"] += 1
                     ndecl += 1
                     cur = (kind, i)
                     if name:

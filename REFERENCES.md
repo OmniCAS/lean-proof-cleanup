@@ -1,6 +1,6 @@
 # 参考文献与出处
 
-**Summary (English).** Numbered list of every public source used in this repository: papers [P], tools and documentation [T], datasets and repositories [D], and community records [C], each with venue, year, link and how closely we read it. Checked on 2026-11-25; D16–D18, C5 and C6 added on 2026-11-26.
+**Summary (English).** Numbered list of every public source used in this repository: papers [P], tools and documentation [T], datasets and repositories [D], and community records [C], each with venue, year, link and how closely we read it. Checked on 2026-11-25; D16–D21, C5 and C6 added on 2026-11-26.
 
 文档里直接给出链接；本文件按类编号，方便核对。每条标明阅读程度：
 
@@ -127,7 +127,7 @@
 | D4 | PutnamBench | [trishullab/PutnamBench](https://github.com/trishullab/PutnamBench) | 摘要 |
 | D5 | Lean Workbook | [HF internlm/Lean-Workbook](https://huggingface.co/datasets/internlm/Lean-Workbook) | 摘要（元数据） |
 | D6 | Goedel-Prover 的 Workbook 证明 | [HF Goedel-LM/Lean-workbook-proofs](https://huggingface.co/datasets/Goedel-LM/Lean-workbook-proofs) | 摘要（元数据与 LICENSE） |
-| D7 | Mathlib | [leanprover-community/mathlib4](https://github.com/leanprover-community/mathlib4) | 相关段落（v4.35.0 的 linter 与脚本） |
+| D7 | Mathlib | [leanprover-community/mathlib4](https://github.com/leanprover-community/mathlib4) | 相关段落（v4.35.0 的 linter 与脚本）；全文（提交 `56a00585` 的结构指标，见 `cases/profiles.md`） |
 | D8 | rh-proof-dependencies（James Shore） | [james-shore/rh-proof-dependencies](https://github.com/james-shore/rh-proof-dependencies) | 相关段落（README v0.2.1） |
 | D9 | rh-proof-trimmed（James Shore） | [james-shore/rh-proof-trimmed](https://github.com/james-shore/rh-proof-trimmed) | 相关段落（README） |
 | D10 | 社区 RH 仓库 | [leanprover-community/riemann-hypothesis](https://github.com/leanprover-community/riemann-hypothesis)，HEAD `75e2012` | 全文（Git 对象统计，见 `data/`；README、`verification/NOTES.md`、CI 工作流） |
@@ -139,6 +139,9 @@
 | D16 | grh-lean：可读版 `grh/` 与紧凑版 `grh-compact/`（Luke Sernau 与 Anthropic 同事，借助 Claude；Apache-2.0，Copyright 2026 Anthropic, PBC） | [lsernau/grh-lean](https://github.com/lsernau/grh-lean)，提交 `72fead1` | 全文（两版源码统计、README、NOTICE、GUIDE、ATTRIBUTION） |
 | D17 | MIT 对原始版本的核验页（Andrew Sutherland） | [math.mit.edu/~drew/grh](https://math.mit.edu/~drew/grh/) | 摘要（按版本追踪整理） |
 | D18 | MIT 对两个短版本的核验页（Andrew Sutherland） | [math.mit.edu/~drew/shortgrh](https://math.mit.edu/~drew/shortgrh/) | 相关段落（页面 2026-11-26 02:50 UTC 版，全部检查已结束；03:09 UTC 读取） |
+| D19 | FLT（人写研究仓库，结构指标对照） | [ImperialCollegeLondon/FLT](https://github.com/ImperialCollegeLondon/FLT)，提交 `019805815d7d` | 全文（结构指标，见 `cases/profiles.md`） |
+| D20 | Carleson（人写研究仓库，结构指标对照） | [fpvandoorn/carleson](https://github.com/fpvandoorn/carleson)，提交 `f7487cc9da4d` | 全文（同上） |
+| D21 | PrimeNumberTheoremAnd（人写研究仓库，结构指标对照） | [AlexKontorovich/PrimeNumberTheoremAnd](https://github.com/AlexKontorovich/PrimeNumberTheoremAnd)，提交 `e9906138410f` | 全文（同上） |
 
 ## C 社区记录
 

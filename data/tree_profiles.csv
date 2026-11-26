@@ -1,0 +1,8 @@
+tree,files,code_lines,theorems_and_lemmas,lines_per_theorem,declarations_per_file,single_declaration_files_share,import_share_of_lines,comment_share_of_lines,named_prop_definitions,option_overrides_per_kloc,repeated_name_share,have_per_kloc,rw_per_kloc,exact_per_kloc,simp_per_kloc,simp_all_per_kloc,grind_per_kloc,aesop_per_kloc,omega_per_kloc
+compact,794,69090,7088,11.1,13.8,0.097,0.012,0.166,4,0.64,0.023,63.4,16.1,12.7,173.4,29.5,38.4,18.2,2.1
+readable,803,283663,18227,21.0,29.7,0.006,0.004,0.278,304,0.15,0.017,124.8,52.7,37.7,79.2,1.7,6.2,1.4,3.0
+flt,260,36067,2240,15.6,14.3,0.185,0.02,0.151,10,5.93,0.058,88.1,97.3,64.8,73.3,2.6,1.2,1.6,7.3
+carleson,124,39396,2607,16.8,24.9,0.073,0.006,0.06,12,3.12,0.043,67.5,129.4,78.3,76.1,1.5,0.7,1.1,0.4
+pnt,233,142434,8293,17.5,38.9,0.094,0.005,0.085,85,3.05,0.017,127.2,78.5,55.4,36.5,2.1,4.3,1.4,2.1
+mathlib,8624,1341536,190303,7.5,30.0,0.037,0.01,0.15,1077,8.34,0.133,31.8,65.1,42.0,102.1,1.6,5.0,1.7,0.1
+original,175187,13295716,818755,16.7,6.1,0.45,0.052,0.0,80106,5.04,0.13,168.0,133.7,81.5,55.0,0.1,0.0,0.0,10.3
