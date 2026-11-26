@@ -1,8 +1,8 @@
 # large-navierstokes：50 万行的多文件生成开发，分阶段压缩
 
-**Summary (English).** The staged process on `openai/NavierStokesAndEuler` (model-generated, Apache-2.0, 2,657 modules, 498,912 code lines, 38,084 theorems; four headline theorems fixed by upstream challenge files), run on the build server. Two stages are done and gated on the whole project: pruning what the headline theorems do not reach (38,084 → 28,746 theorems, 498,912 → 386,279 code lines) and unrolling single-use lemmas module by module (28,746 → 22,005 theorems, code lines unchanged, longest proof 185 → 811 lines, clean build 17.9 → 19.2 minutes). Together: 1.29× in code lines, 1.73× in theorems, all of the line reduction from pruning. The stages that need the mathematics are run on sub-developments with a one-statement contract, chosen from the dominator tree of the declaration graph; three are set up and their rewriting runs are recorded here as they finish. The first (`pulse`) went from 2,035 to 1,512 lines in 99 minutes (1.35×): its estimates are tight and no shorter route was found, in contrast to the 4–8× of the single-file blocks. It also showed that dead code left over from pruning pins statements inside a block; the block tool now puts such dead users into the block. The text is in Chinese.
+**Summary (English).** The staged process on `openai/NavierStokesAndEuler` (model-generated, Apache-2.0, 2,657 modules, 498,912 code lines, 38,084 theorems; four headline theorems fixed by upstream challenge files), run on the build server. Two stages are done and gated on the whole project: pruning what the headline theorems do not reach (38,084 → 28,746 theorems, 498,912 → 386,279 code lines) and unrolling single-use lemmas module by module (28,746 → 22,005 theorems, code lines unchanged, longest proof 185 → 811 lines, clean build 17.9 → 19.2 minutes). Together: 1.29× in code lines, 1.73× in theorems, all of the line reduction from pruning. The stages that need the mathematics are run on sub-developments with a one-statement contract, chosen from the dominator tree of the declaration graph; three are set up and their rewriting runs are recorded here as they finish. The first (`pulse`) went from 2,035 to 1,512 lines in 99 minutes (1.35×): its estimates are tight and no shorter route was found, in contrast to the 4–8× of the single-file blocks. The second (`matching`) went from 1,571 to 937 lines in 61 minutes (1.68×), by deliberately crude bounds and by reusing lemmas the project already had. The first also showed that dead code left over from pruning pins statements inside a block; the block tool now puts such dead users into the block. The text is in Chinese.
 
-状态：阶段 1、2 **完成并过闸门**；按块改写（阶段 3–5）**进行中**，第一块已完成（2026-11-27）。
+状态：阶段 1、2 **完成并过闸门**；按块改写（阶段 3–5）**进行中**，两块已完成（2026-11-27）。
 
 ## 结论（到阶段 2 为止）
 
@@ -95,8 +95,8 @@
 | 块 | 行（前 → 后） | 声明（前 → 后） | 比值 | 用时（预算 3 小时） | token | 构建 / 草稿检查 / 闸门 | 剩下的为什么压不动 |
 |---|---|---|---|---|---|---|---|
 | pulse | 2,035 → 1,512 | 98 → 95 | 1.35 | 99 分钟 | 41.2 万 | 9 / 24 / 4 | 数学本身；另有 6 条陈述被块外的死代码钉住 |
-| matching | 进行中 | | | | | | |
-| repair | 未开始 | | | | | | |
+| matching | 1,571 → 937 | 51 → 29 | 1.68 | 61 分钟 | 41.9 万 | 6 / 约 14 / 3 | 数学本身（13 个具体参数积分的导数界，两种情形下一致的种子界） |
+| repair | 进行中（块含 7 个死声明，共 3,501 行） | | | | | | |
 
 ### pulse：2,035 → 1,512 行
 
@@ -109,6 +109,24 @@
 试过又放弃的：更粗的锥论证（不可能，见上）；只做一阶滞后展开（余项除以 Qs ∼ λ 后是 O(1)）；对 ∂η 的粗界（在 η ∼ √λ 附近变成 O(1/√λ)）；把约 115 行的常数定义与正性引理并成一个总常数（估计省 50–60 行，要重证每一条界，没有做）。
 
 **判断：剩下的压不动是数学本身长，不是预算**（三小时用了 1 小时 40 分钟）。与单文件对象上三块 4–8 倍的结果相比，这一块只有 1.35 倍：这里的估计是紧的，没有可绕开的路。
+
+### matching：1,571 → 937 行
+
+契约：对固定的出射剖面、阶数与容差，存在一串阈值（控制容差 ε、尺度 Λ₀、成形时间 T、归一化阈值 C₀），使每个满足小性条件的控制都满足“五行匹配债务”的界。日志原样在 [`matching-log.md`](matching-log.md)。
+
+这一块里粗估计是够用的，代理用上了：
+
+| 原来的做法 | 换成 |
+|---|---|
+| `resetDebtJetSize_bound`（396 行）加 9 个辅助定义与引理：15 条逐行的导数界，带精确的多项式系数 | 四条引理约 190 行；系数故意取粗（随 C 增大而消失的部分 ≤ 13·2ⁿ·M²·(L+1)·(r + r^(1/5) + 1/C²)），块内自带的积分引理换成工程里已有的一条 |
+| 成形场的一致导数界（172 行，在一个点处分情形，另一侧用幂律重新表示） | 成形场 = 旧场 · exp(s·(…))，s ∈ [0,1]：种子界乘一个指数复合的界，一个乘积估计，不再分情形 |
+| 一层具名的常数与“预算”定义（`FixedBounds`、`prefixBudget`、`driftBudget` 等）及其引理 | 契约证明里的 `obtain`；C₀ 由一个 `Tendsto` 给出 |
+| 种子界（另一个文件里 534 行） | 约 350 行：自然剖面写成乘积（不取对数），轴后的场写成“自然剖面 · exp(差)”，差的值与导数由一条引理给出 |
+| 重新证明 σ′ 有界（53 行） | 用工程里已经证过的界（14 行） |
+
+三个存档阶段：1,128、985、937 行，都过块闸门。试过或排除的：完全不用系数剖面的对数（不行，端点处的对数进入成形因子与斜率窗口）；把理想行也写成积分以复用通用界（不行，理想密度在 x = 0 处不光滑）；用紧性代替显式的种子估计（不适用，界要对 C、系数解与全部控制一致，不是紧族）。
+
+**判断：剩下的压不动是数学本身长，不是预算**（三小时用了约 1 小时）。还能省的是打磨，估计 50–100 行。
 
 ### 一个新问题：残留的死代码会钉住块内的陈述
 
