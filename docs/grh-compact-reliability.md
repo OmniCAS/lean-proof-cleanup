@@ -1,6 +1,6 @@
 # grh-lean 紧凑版的可靠性
 
-**Summary (English).** A statement and trust-surface audit of the compact edition of `lsernau/grh-lean` (`grh-compact/`, commit `72fead1`, Lean v4.35.0, Mathlib `56a00585`). Its five theorems are the same statements as the original development's: the first is Mathlib's `RiemannHypothesis`, the four definitions in `Statements.lean` match the original text exactly, and the Mathlib definitions of ζ and Dirichlet L-functions did not change between the two Mathlib versions. The source contains no `sorry`, no custom axiom, no kernel bypass, no macro or metaprogram. MIT reports that all six checkers accept its export and that `lake comparator --paranoid` passes on two machines; our own sandboxed build without network (12 cores, 16 GB) completed with 9,843 jobs and no errors, and `#print axioms` shows only the three standard axioms. The mathematics is unreviewed. The text is in Chinese.
+**Summary (English).** A statement and trust-surface audit of the compact edition of `lsernau/grh-lean` (`grh-compact/`, commit `72fead1`, Lean v4.35.0, Mathlib `56a00585`). Its five theorems are the same statements as the original development's: the first is Mathlib's `RiemannHypothesis`, the four definitions in `Statements.lean` match the original text exactly, and the Mathlib definitions of ζ and Dirichlet L-functions did not change between the two Mathlib versions. The source contains no `sorry`, no custom axiom, no kernel bypass, no macro or metaprogram. MIT reports that all six checkers accept its export and that `lake comparator --paranoid` passes on two machines; our own build in a sandbox without network (12 cores, 16 GB; Mathlib and its dependencies prebuilt at the pinned revisions, so only the project's own modules were compiled) completed with 9,843 jobs and no errors, and `#print axioms` shows only the three standard axioms; a comparison of our export with MIT's hash is in progress. The mathematics is unreviewed. The text is in Chinese.
 
 对象：[grh-lean][grh] 提交 `72fead1` 的 `grh-compact/`（Lean v4.35.0，Mathlib `56a00585`）。口径：**本仓库核对**＝我们读源码或运行得到；**本仓库测**＝我们在本机运行得到；**他人报告**＝MIT 核验页 [D18] 或作者 README 的说法，我们没有复现。
 
@@ -105,10 +105,11 @@ MIT 页另有把五个陈述完全展开（含所有实例）的输出，与上�
 
 ## 6 本机构建（本仓库测）
 
-- 方式：依赖用本机已有、逐项核对版本相同的 Mathlib 与各包；`lake build` 在没有网络的沙箱里运行，随后用仓库自带的 `scripts/PrintAxioms.lean` 打印五个定理的公理。
+- 方式：Mathlib 与其依赖用预建副本，每个包的版本都对照清单核对过、工作区干净，所以这里只编译了项目自己的模块；`lake build` 在拒绝网络访问的沙箱里运行，随后用仓库自带的 `scripts/PrintAxioms.lean` 打印五个定理的公理。
 - 机器：12 核、16 GB 内存（作者建议 24 GB）。
 - 结果：2026-11-26 00:13:54 UTC 开始，02:47:10 UTC 结束（约 2 小时 33 分），"Build completed successfully (9843 jobs)"，零错误；五个定理都只依赖 `propext`、`Classical.choice`、`Quot.sound`。
-- 没有做：导出与外部内核检查，以及与 MIT 公布的导出哈希的比对。
+- 导出五个定理并与 MIT 公布的导出哈希比对：进行中，结果待补。
+- 没有做：外部内核检查；Mathlib 本身没有在本机重编。
 
 [grh]: https://github.com/lsernau/grh-lean
 [D16]: ../REFERENCES.md

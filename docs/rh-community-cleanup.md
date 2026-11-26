@@ -17,7 +17,7 @@
 ### 新的核心判断
 
 1. **最大的削减不再来自逐步清理，而来自重写。** 定理 + 引理：原始 818,755 个，可读版 18,227 个，紧凑版 7,088 个；同期 `alpoge` 线到第 23 批是正文行 −23.3%、theorem/lemma 行 −30.3%（本仓库测）。逐步清理的上限约两到三倍，重写拿到了两个数量级（见 [grh-compact-vs-original](grh-compact-vs-original.md) 与 [`../methods/`](../methods/README.md)）。
-2. **验证的差别来自规模。** `alpoge` 线从未有过端到端核验；两个短版本发布当天就被 MIT 用六个检查器检查完，紧凑版的 `lake comparator --paranoid` 在两台机器上通过 [D18]。我们在断网沙箱里独立构建紧凑版通过，`#print axioms` 只有三条标准公理（[grh-compact-reliability](grh-compact-reliability.md) §6）。
+2. **验证的差别来自规模。** `alpoge` 线从未有过端到端核验；两个短版本发布当天就被 MIT 用六个检查器检查完，紧凑版的 `lake comparator --paranoid` 在两台机器上通过 [D18]。我们在断网沙箱里独立构建紧凑版通过（Mathlib 为预建副本），`#print axioms` 只有三条标准公理（[grh-compact-reliability](grh-compact-reliability.md) §6）。
 3. **新数学的风险转移了。** 短版本换了多处子论证（去掉奇点消解、Vandiver 弱形式、patching、Hida、局部 Langlands 等） [z643717520]，原始版本的核验不能转给它们；它们靠自己的核验，数学同样无人审阅。
 4. **社区以可读版为准。** 紧凑版难读，也有人批评它是在刷行数；可读版上清理从 A 层的机械路线重新开始（Anton Mellit 数出约 2.3 万个声明中 1,151 个未用 [z643723346]）。
 
@@ -30,7 +30,7 @@
 | 原始 | 社区仓库 `original` 分支 `40e56bab`；冻结镜像 [D11] | 174,793 个文件、17,374,215 行 | v4.33.1 | 完整：MIT 全部模块编译、`#print axioms`、沙箱内重建并重新导出（与公开导出逐字节相同）、175,187 个模块的 `leanchecker` 重放、nanoda、con-leche / con-ron `--compare`、Lean 默认与 paranoid 内核、`lake comparator` 全流程 [D17]；Jack McCarthy 的 comparator 运行通过陈述比对、paranoid 内核与 nanoda [z643222049] |
 | grh-lean 可读版 | `lsernau/grh-lean` `grh/`，`72fead1` [D16] | 805 个文件、477,151 行 | v4.35.0 | 独立：MIT 沙箱构建 9,852 个任务零错误；`#print axioms`；803 / 803 模块重放；两机导出逐字节相同（4,485,867,644 字节）；con-leche / con-ron `--compare`；nanoda；默认与 paranoid 内核；lean4lean（2 小时 35 分，峰值 332 GB）；`lake comparator` 通过；单一流程的 `--paranoid` 一台已过 lean4lean 阶段、仍在收尾，另一台因内存保护被手动停止（不是拒绝） [D18]；Riccardo Brasca 的 nanoda 接受 [z643720223] |
 | 社区新 `main` | `9211277`（换上时）→ `b7642ae`（11-26 02:40 UTC） | 806 → 805 个文件；477,160 → 477,086 行 | v4.35.0 → v4.37.0-rc1 | 换上时与可读版源码相同，可读版的核验适用；之后的提交没有单独的端到端核验报告 |
-| grh-lean 紧凑版 | `lsernau/grh-lean` `grh-compact/`，`72fead1` [D16] | 794 个文件、约 11.4 万行 | v4.35.0 | 独立：MIT 全部检查通过，`lake comparator --paranoid` 在两台机器上给出 "Your solution is okay!" [D18]；本仓库在断网沙箱里构建通过（9,843 个任务，零错误），`#print axioms` 只有三条标准公理 |
+| grh-lean 紧凑版 | `lsernau/grh-lean` `grh-compact/`，`72fead1` [D16] | 794 个文件、约 11.4 万行 | v4.35.0 | 独立：MIT 全部检查通过，`lake comparator --paranoid` 在两台机器上给出 "Your solution is okay!" [D18]；本仓库在断网沙箱里构建通过（9,843 个任务，零错误；Mathlib 与依赖为预建副本，只编译项目模块），`#print axioms` 只有三条标准公理；导出哈希与 MIT 的比对进行中 |
 | `alpoge` 线（原 `main`） | 分支 `alpoge`，`756a702`（第 23 批） | 58,735 个文件、13,710,772 行（正文 11,217,763） | v4.37.0-rc1 | 只有构建：CI 分片构建（多数批次对着共享缓存增量构建）与每批的机械检查；五个陈述的文本与原始一致（本仓库测）；没有端到端核验 |
 | Shore 的机械裁剪 | `james-shore/rh-proof-trimmed` [D9] | 150,632 个文件、14,252,250 行（S4，作者统计） | v4.33.1 | 作者自报：每阶段完整构建、nanoda 接受、con-leche `--compare` 通过；无第三方复核 |
 | Devin Watson 的分解压缩 | 无公开仓库 | 自称 528,681 行 | — | 仅声称：结构去重、hash-consing、DAG 内联 [z643715299] |
