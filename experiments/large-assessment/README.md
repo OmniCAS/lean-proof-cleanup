@@ -1,8 +1,8 @@
 # large-assessment：两个大候选的实建评估与取舍
 
-**Summary (English).** Two large model-generated repositories were fetched and built on the build server to choose the subject of the large experiment. `openai/NavierStokesAndEuler` builds unchanged in 17.9 minutes on 32 cores (6.7 core-hours); `AxiomMath/Mordell` with the part of the Stacks library it imports takes 3 h 17 min (96 core-hours, 21,637 modules). In NavierStokesAndEuler 33.8% of 38,084 theorems are unreachable from its four headline theorems; in Mordell + Stacks the headline theorems reach 23.9% of the 214,156 theorems in the imported modules. NavierStokesAndEuler is chosen: a full gate is eleven times cheaper and the repository is self-contained on Mathlib. Its mechanical stage (whole-project pruning in two passes) is done and gated: 38,084 → 28,746 theorems, 498,912 → 386,279 code lines; the unroll stage is running. The text is in Chinese.
+**Summary (English).** Two large model-generated repositories were fetched and built on the build server to choose the subject of the large experiment. `openai/NavierStokesAndEuler` builds unchanged in 17.9 minutes on 32 cores (6.7 core-hours); `AxiomMath/Mordell` with the part of the Stacks library it imports takes 3 h 17 min (96 core-hours, 21,637 modules). In NavierStokesAndEuler 33.8% of 38,084 theorems are unreachable from its four headline theorems; in Mordell + Stacks the headline theorems reach 23.9% of the 214,156 theorems in the imported modules. NavierStokesAndEuler is chosen: a full gate is eleven times cheaper and the repository is self-contained on Mathlib. Its mechanical stage (whole-project pruning in two passes) is done and gated: 38,084 → 28,746 theorems, 498,912 → 386,279 code lines; the later stages are recorded in [`../large-navierstokes/`](../large-navierstokes/README.md). The text is in Chinese.
 
-状态：评估**完成**，对象已选定；大实验的阶段 1 已过闸门，阶段 2 在跑（2026-11-26）。
+状态：评估**完成**，对象已选定；大实验的阶段 1 已过闸门，之后的阶段见 [large-navierstokes](../large-navierstokes/README.md)（2026-11-26）。
 
 ## 结论
 
@@ -119,4 +119,4 @@
 
 ## 之后
 
-阶段 2（按模块并行展开，[`unroll_project.py`](../../scripts/refold/unroll_project.py)）在跑：2,434 个模块里 1,603 个有候选，共 10,739 个候选内联。结果出来后另开大实验的记录页。
+阶段 2（按模块展开）已完成并过闸门，记录在 [`../large-navierstokes/README.md`](../large-navierstokes/README.md)：定理 28,746 → 22,005，代码行不变。

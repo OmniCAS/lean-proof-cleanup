@@ -12,7 +12,8 @@ A block is a contract theorem together with the declarations that are needed onl
   3. the change is local: every hunk of `git diff BASE` lies inside the block's line ranges, so
      blocks rewritten in separate working copies can be merged.
 
-Usage: python3 -I block_gate.py BLOCK.json STAGE --base REF [--subject NAME ...] [--quick] [--slack 3]
+Usage: python3 -I block_gate.py BLOCK.json STAGE --base REF [--subject NAME ...] [--quick] [--keep-build] [--slack 3]
+       (--keep-build is passed to gate.py: incremental build instead of a build from scratch)
        python3 -I block_gate.py BLOCK.json --record-base        (on the built base; writes BLOCK.contract.base)
 Environment: REFOLD_REPO, REFOLD_OUT, REFOLD_ISOLATE, REFOLD_SUBJECTS as for gate.py; the working
 copy needs the Gate library (lean/GateTools.lean as Gate/Tools.lean).
@@ -85,7 +86,7 @@ def main():
     ap.add_argument("block"); ap.add_argument("stage", nargs="?", default="check")
     ap.add_argument("--base"); ap.add_argument("--subject", nargs="*", default=[])
     ap.add_argument("--quick", action="store_true"); ap.add_argument("--slack", type=int, default=3)
-    ap.add_argument("--record-base", action="store_true")
+    ap.add_argument("--record-base", action="store_true"); ap.add_argument("--keep-build", action="store_true")
     a = ap.parse_args()
     block = json.load(open(a.block, encoding="utf-8"))
     base_fp = re.sub(r"\.json$", "", a.block) + ".contract.base"
@@ -113,7 +114,8 @@ def main():
         if not a.subject:
             print("no --subject given: nothing to gate")
         for s in a.subject:
-            g = subprocess.run([sys.executable, "-I", os.path.join(HERE, "gate.py"), s, "block-%s-%s" % (short[:40], a.stage)],
+            g = subprocess.run([sys.executable, "-I", os.path.join(HERE, "gate.py"), s, "block-%s-%s" % (short[:40], a.stage)]
+                               + (["--keep-build"] if a.keep_build else []),
                                env=dict(os.environ, REFOLD_REPO=REPO), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             print(g.stdout.decode("utf-8", "replace").strip())
             ok_build = ok_build and g.returncode == 0
