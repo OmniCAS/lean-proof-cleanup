@@ -1,6 +1,6 @@
 # block-contracts：先固定接口，再逐块专门改写
 
-**Summary (English).** Follow-up to [`small-compactness`](../small-compactness/README.md), where one rewriting run over a 17,000-line file removed 8% of the lines and left the large blocks untouched as "long genuine arguments". Question: does dedicated effort per block move the number? Each large block gets a contract (the one theorem through which the rest of the file uses it, found as a dominator in the declaration graph) and its own rewriting run whose brief fixes only the contract: everything inside may be proved in any way, by a different mathematical argument and with anything in Mathlib. A block gate accepts a result when the file's gate passes, the contract's statement fingerprint is unchanged and every changed line lies inside the block. **Result: it does.** The three blocks went from 1,446 to 223 lines, from 2,961 to 706 and from 3,914 to 488 (6.5×, 4.2×, 8.0×), each in about an hour of a three-hour budget; merged, the file is at 9,054 code lines from 15,844 (17,236 upstream) and 151 theorems from 214 (656 upstream), and passes the gate. In every block the old length came from a detour or from the choice of model, not from the mathematics; no run stopped for lack of budget. The new arguments were chosen by the model and are accepted only because Lean checks them. The text is in Chinese.
+**Summary (English).** Follow-up to [`small-compactness`](../small-compactness/README.md), where one rewriting run over a 17,000-line file removed 8% of the lines and left the large blocks untouched as "long genuine arguments". Question: does dedicated effort per block move the number? Each large block gets a contract (the one theorem through which the rest of the file uses it, found as a dominator in the declaration graph) and its own rewriting run whose brief fixes only the contract: everything inside may be proved in any way, by a different mathematical argument and with anything in Mathlib. A block gate accepts a result when the file's gate passes, the contract's statement fingerprint is unchanged and every changed line lies inside the block. **Result: it does.** The three blocks went from 1,446 to 223 lines, from 2,961 to 706 and from 3,914 to 488 (6.5×, 4.2×, 8.0×), each in about an hour of a three-hour budget; merged, the file is at 9,054 code lines from 15,844 (17,236 upstream) and 151 theorems from 214 (656 upstream), and passes the gate. In every block the old length came from a detour or from the choice of model, not from the mathematics; no run stopped for lack of budget. A second party rebuilt the published merged file in a fresh project and found the headline statements and axioms unchanged. The new arguments were chosen by the model and are accepted only because Lean checks them. The text is in Chinese.
 
 状态：三块**完成**并合并过闸门（2026-11-27）；合并后的文件在 [`result/`](result/)。
 
@@ -60,7 +60,9 @@
 | + upper | 13,239 | 12,427 | 187 | 204 | 87 | 98,169 | 97 | 过 |
 | + lower | 9,813 | 9,054 | 151 | 156 | 71 | 76,627 | 95 | 过 |
 
-从上游文件算起：17,236 → 9,054 代码行（1.90 倍），定理 656 → 151（4.3 倍），定义 273 → 156。这些数字目前只经过我们自己的闸门；第二方的独立检查（另起工程重建、重算陈述指纹）还没有做。完整指标在 [`metrics.jsonl`](metrics.jsonl)；文件、许可与改动说明在 [`result/`](result/)。
+从上游文件算起：17,236 → 9,054 代码行（1.90 倍），定理 656 → 151（4.3 倍），定义 273 → 156。
+
+**第二方检查（2026-11-27）。** 另一个会话拿发布的合并文件独立检查：新建一个 Lake 工程（Lean v4.33.1、Mathlib `0df444a3`），不联网构建通过（8,711 个任务，1 分 47 秒）；用它自己写的指纹工具，在两个上游 Challenge 模块与结果文件上对五条标题定理算陈述指纹，输出逐行相同（16 + 6 个项目内常量）；`#print axioms` 对五条标题定理都只给出三条标准公理。这项检查针对标题定理；三个契约定理的指纹只由本实验的块闸门检查。完整指标在 [`metrics.jsonl`](metrics.jsonl)；文件、许可与改动说明在 [`result/`](result/)。
 
 剩下的 9,813 行里，三块占 1,417 行；块外的 8,396 行没有动，其中约 6,660 行是第二个开发的其余部分，它被标题定理 `twoDegenerateExtremalCounterexample` 本身支配（该定理的证明 3,691 行），没有更小的单定理接口。要继续，得先在那条长证明内部切出接口。
 
