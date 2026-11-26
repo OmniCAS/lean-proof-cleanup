@@ -113,5 +113,5 @@ MIT 页另有把五个陈述完全展开（含所有实例）的输出，与上�
 - 所以本机没有做独立内核检查；我们自己的结果只有构建与 `#print axioms`。Mathlib 本身没有在本机重编。
 
 [grh]: https://github.com/lsernau/grh-lean
-[D16]: ../REFERENCES.md
-[D18]: ../REFERENCES.md
+[D16]: ../../REFERENCES.md
+[D18]: ../../REFERENCES.md

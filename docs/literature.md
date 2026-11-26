@@ -80,7 +80,7 @@
 | Isabelle [`find_unused_assms`][unusedassms] | Bulwahn, 2012 | Isabelle | 逐个去掉前提跑 Quickcheck，标出可能多余的假设（启发式） |
 | Alama, Mamane, Urban, [*Dependencies in Formal Mathematics*][deps] | CICM 2012 | Coq、Mizar | 依赖抽取的方法与应用 |
 | Li et al., *The Network Structure of Mathlib* | arXiv 2026 | Lean 4 | 44.8% 的定理不被任何声明引用；库的叶子是 API，不等于死代码 |
-| Shore, [rh-proof-dependencies][shore-deps] | 数据集 v0.2.1，2026-11 | Lean 4 | 从内核证明项算 RH 五个定理的依赖闭包；见 [rh-community-cleanup.md](rh-community-cleanup.md) |
+| Shore, [rh-proof-dependencies][shore-deps] | 数据集 v0.2.1，2026-11 | Lean 4 | 从内核证明项算 RH 五个定理的依赖闭包；见 [rh-community-cleanup.md](../cases/rh/rh-community-cleanup.md) |
 | `lake shake`、import-graph、Batteries `#show_unused` | Lean 工具 | Lean 4 | 见 [survey.md](survey.md) §3 |
 
 ## 6. 修复与跨版本维护（仓库粒度）

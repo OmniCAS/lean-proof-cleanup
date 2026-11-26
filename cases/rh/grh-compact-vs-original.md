@@ -2,7 +2,7 @@
 
 **Summary (English).** How the two short editions of `lsernau/grh-lean` (readable `grh/`, about 477k lines; compact `grh-compact/`, about 113k lines; commit `72fead1`) relate to the original 17.4M-line development, counted by us from the three source trees without building them. The reduction is a rewrite, not a cleanup: theorems and lemmas fall from 818,755 to 18,227 and 7,088, while lines per theorem stay at 16.7, 21.0 and 11.1. Dead code explains about 1.3 times; mechanical cleanup as a whole about two to three times. Only 14% of the compact edition's names occur in the original; the proof skeleton is the same, the organisation is new. The text is in Chinese.
 
-对象：原始归档（社区仓库 `original` 分支，提交 `40e56bab`）、[grh-lean][grh]（提交 `72fead1`）的可读版 `grh/` 与紧凑版 `grh-compact/`。数字由 [`../scripts/compare_versions.py`](../scripts/compare_versions.py) 从三份源码直接数出，汇总在 [`../data/versions_summary.json`](../data/versions_summary.json)；没有构建。作者的说法引自 Zulip 话题 "New proof in 300k lines" [C5]。该开发陈述了 RH 与 Dirichlet GRH，第三方报告机器核验通过，数学尚无人审阅。
+对象：原始归档（社区仓库 `original` 分支，提交 `40e56bab`）、[grh-lean][grh]（提交 `72fead1`）的可读版 `grh/` 与紧凑版 `grh-compact/`。数字由 [`../scripts/profile_lean_trees.py`](../../scripts/profile_lean_trees.py) 从三份源码直接数出，汇总在 [`../data/tree_profiles.json`](../../data/tree_profiles.json)；没有构建。作者的说法引自 Zulip 话题 "New proof in 300k lines" [C5]。该开发陈述了 RH 与 Dirichlet GRH，第三方报告机器核验通过，数学尚无人审阅。
 
 ## 核心判断
 
@@ -189,7 +189,7 @@ end
 6. **去掉包装层。** 不为每条陈述单独定义命名的 `Prop`，不写别名定理，不把一串假设包成结构再层层传递。
 7. **两步走。** 先压到最短，再为阅读展开。可读版是紧凑版的四倍，多出来的是注释（28% 的行）、`calc` 和分步。
 8. **代价。** 源码短不等于证明项小：紧凑版的导出（5.17 GB）比可读版（4.49 GB）还大 [D18]；重度自动化的证明对库版本更敏感：紧凑版全局设了 `maxHeartbeats 4000000`，并有 30 处 `backward.isDefEq.respectTransparency false`；紧凑版不适合人读，社区以可读版为准。
-9. **机械清理与语义重写是两回事。** 删死代码、去重、收窄导入不需要理解数学，上限是二三成；两个数量级需要理解证明后重写。各条路线见 [`../methods/`](../methods/README.md)。
+9. **机械清理与语义重写是两回事。** 删死代码、去重、收窄导入不需要理解数学，上限是二三成；两个数量级需要理解证明后重写。各条路线见 [`../methods/`](../../methods/README.md)。
 
 ## 5 与原始版本的关系
 
@@ -268,10 +268,10 @@ end
 可读版比紧凑版多出来的四倍行数，来自三处：同一条引理写得更展开（2.2 倍）；拆出更多中间引理（声明数是 2.3 倍）；注释（占 28% 的行）。与原始版本相比，可读版的声明名只有不到 8% 在原始版本出现过。
 
 [grh]: https://github.com/lsernau/grh-lean
-[C5]: ../REFERENCES.md
-[D8]: ../REFERENCES.md
-[D16]: ../REFERENCES.md
-[D18]: ../REFERENCES.md
+[C5]: ../../REFERENCES.md
+[D8]: ../../REFERENCES.md
+[D16]: ../../REFERENCES.md
+[D18]: ../../REFERENCES.md
 [z643710501]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines/near/643710501
 [z643717520]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines/near/643717520
 [z643719896]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines/near/643719896

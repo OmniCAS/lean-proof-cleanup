@@ -1,6 +1,6 @@
 # 待解决问题
 
-**Summary (English).** Open problems in cleaning up Lean proofs, each with our suggested answer where we have one: trusted definitions, keep lists, the module system, comparator usage, hotspots, tooling gaps, metrics, parallel development, and the open questions of the Lean RH cleanup. The text is in Chinese.
+**Summary (English).** Open problems in cleaning up Lean proofs, each with our suggested answer where we have one: trusted definitions, keep lists, the module system, comparator usage, hotspots, tooling gaps, metrics, parallel development, the measured profiles, and, as a labelled case, the open questions of the Lean RH cleanup. The text is in Chinese.
 
 每条先写问题，再写建议的答案；没有答案的写明缺什么。
 
@@ -17,7 +17,13 @@
 9. **怎样和正在进行的开发并行？** 清理在独立 worktree 或分支里做，小批 PR，每批不超过一个目录，合并前对着当前主干重放闸门。
 10. **缺什么工具？** 仓库级的未用声明工具（Lean 核心与 Mathlib 都没有）、规范化类型的去重索引、Try-this 的批量写回与计时筛选、下游锥体的增量验证调度。
 
-## Lean RH 开发
+## 一般问题（续）
+
+11. **人写研究仓库上机械路线能删多少？** 没有公开实测。结构指标（[profiles](../cases/profiles.md)）显示只有一个声明的文件 7%–19%、命名 `Prop` 定义每千行 0.3–0.6 个，远低于模型生成的大型开发，所以预期收益小；要用 A1、A2 在一两个这样的仓库上真删一次才能确定。
+12. **模型生成的中小仓库是什么样？** 结构指标只测了一份模型生成的大型开发；缺一个公开的、模型生成的中小仓库作对照。
+13. **哪些结构指标能在不构建的情况下预测可删量？** 现有对照只有七棵树；指标与实际删除量的关系要在更多仓库上验证。
+
+## 案例：Lean RH 开发（大仓库 × 模型生成的大型开发）
 
 1. **当前 `main` 的依赖闭包（声明、文件、行）是多少？** 没人量过。只有原始版本的闭包（James Shore：1,061,400 个声明中 804,912 个被用）和一个口径不明的 727,065（riemann-explorer，提交 `6c68212`）。
 2. **清理后的 `main` 能否通过完整的 comparator 和多个外部内核？** 没人报告过；完整运行只在原始版本上做过。comparator 单线程，原始版本的 paranoid 内核跑了约 69 小时，需要专门安排机器。

@@ -2,7 +2,7 @@
 
 **Summary (English).** A layered plan for cleaning up Lean proofs at four granularities (single theorem, single file, small repository, large repository): the goal of each layer, its means, how to check that semantics are unchanged (statements unchanged, no new axioms, via comparator and `#print axioms`), how far it can be automated, and the problems specific to large repositories (build time, dependency graph, incremental checking, parallel and distributed builds). The text is in Chinese.
 
-配套文档：[survey.md](survey.md)（LeanPolish 与 Lean 工具）、[literature.md](literature.md)（跨系统文献）、[rh-community-cleanup.md](rh-community-cleanup.md)（Lean RH 开发的社区清理）。**优化思路的排序和工程流水线见 [ideas-and-engineering.md](ideas-and-engineering.md)；23 条路线各自的做法、证据与效果见 [`../methods/`](../methods/README.md)（其中有路线与四个层级的对应表）**，本文只给分层目标与判断。
+配套文档：[survey.md](survey.md)（LeanPolish 与 Lean 工具）、[literature.md](literature.md)（跨系统文献）、[rh-community-cleanup.md](../cases/rh/rh-community-cleanup.md)（Lean RH 开发的社区清理）。**优化思路的排序和工程流水线见 [ideas-and-engineering.md](ideas-and-engineering.md)；23 条路线各自的做法、证据与效果见 [`../methods/`](../methods/README.md)（其中有路线与四个层级的对应表）**，本文只给分层目标与判断。
 
 ## 核心判断
 
@@ -12,14 +12,15 @@
 4. **小仓库与大仓库的分界是"每批改动能不能全量重编"。** 能，就每批全量构建加全部 comparator；不能（RH 量级），就必须做下游锥体增量验证、按依赖层分波并行、线性化合并。
 5. **长度、构建时间、可读性分开验收。** 三者弱相关甚至冲突（`simp` 固化成 `simp only [...]` 更长但更快更稳）。主指标是构建时间和声明数，token 数次之，可读性单独人工看。
 
-## 文献与 RH 实测带来的修正
+## 文献与案例带来的修正
 
 - **每层都有跨系统先例，Lean 缺的只是仓库级未用声明工具。** 定理层有 Sledgehammer 最小化、TacticToe 最小化、Metamath `minimize_with`；文件层有 Mizar 的 irrelevant utilities、Adams 的 Tactician；仓库层有 Isabelle `unused_thms`、Mizar 定期修订、iCoq/piCoq 回归选择、AFP 分布式构建（[literature.md](literature.md)）。
 - **最小化必须带"不引入新公理"的约束**（Metamath 的 `/no_new_axioms_from`），对应下面的 G4。
 - **抽引理要按复用次数验收**，不能按提出了多少个（*Library Learning Doesn't*）。
-- **RH 主干的经验**：文件 −66%、正文行 −21%、theorem/lemma 行 −28%，大头来自可达性裁剪、去重和合并模块；但清理后的主干至今没有端到端的 comparator 复核报告，只有"构建通过、陈述文件未改"。闸门应每批跑 comparator，而不是只在发布前。
-- **行数会被 import 展开严重干扰**（RH #185 凭空多出 560 万行），验收以正文行、声明数、闭包大小和冷构建 CPU 时间为准。
-- **机械路线有上限，重写没有走这几层。** grh-lean 在同一个证明骨架上重写，命题个数缩小 115 倍，而逐步清理的上限约两到三倍；对小仓库，当机械路线到顶后，按 C、D 层整体重写（展开再分块、通用化陈述、去包装层、换论证）是下一步，验收仍是同一道闸门（[grh-compact-vs-original.md](grh-compact-vs-original.md)）。
+- **大仓库示例（Lean RH 开发，模型生成）的经验**：文件 −66%、正文行 −21%、theorem/lemma 行 −28%，大头来自可达性裁剪、去重和合并模块；但清理后的主干至今没有端到端的 comparator 复核报告，只有"构建通过、陈述文件未改"。闸门应每批跑 comparator，而不是只在发布前。
+- **行数会被 import 展开严重干扰**（大仓库示例：一次 `import Mathlib` 展开凭空多出约 560 万行），验收以正文行、声明数、闭包大小和冷构建 CPU 时间为准。
+- **收益取决于来源。** 模型生成的竞赛证明靠符号 pass 就能省约两成，精心维护的库几乎省不了（LeanPolish 在 Mathlib 上 0.53%），仓库级基准的大头来自重组依赖（LeanLean）；动手前先算结构指标判断来源（[`../cases/profiles.md`](../cases/profiles.md)）。
+- **机械路线有上限，重写没有走这几层。** 大仓库示例里 grh-lean 在同一个证明骨架上重写，命题个数缩小 115 倍，而逐步清理的上限约两到三倍；对小仓库，当机械路线到顶后，按 C、D 层整体重写（展开再分块、通用化陈述、去包装层、换论证）是下一步，验收仍是同一道闸门（[grh-compact-vs-original.md](../cases/rh/grh-compact-vs-original.md)）。
 
 ## 共用的语义不变闸门
 

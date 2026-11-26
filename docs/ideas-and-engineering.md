@@ -1,15 +1,15 @@
 # Lean 证明清理：优化思路与工程流水线
 
-**Summary (English).** Fourteen concrete cleanup ideas ranked by gain, safety and cost (each with source, granularity, gain and what keeps it correct), and an engineering pipeline for running cleanup on a repository, especially a large one: dependency graph and reachability-based removal, deduplication against Mathlib and within the repository, import minimisation, batching, incremental and distributed builds, a guard on every change, CI and merge order, and what to measure. The text is in Chinese.
+**Summary (English).** Fourteen concrete cleanup ideas for Lean repositories of any scale and provenance, ranked by gain, safety and cost (each with source, granularity, gain and what keeps it correct), and an engineering pipeline for running cleanup on a repository, especially a large one: dependency graph and reachability-based removal, deduplication against Mathlib and within the repository, import minimisation, batching, incremental and distributed builds, a guard on every change, CI and merge order, and what to measure. The text is in Chinese.
 
-来源见 [literature.md](literature.md)（跨系统文献）、[survey.md](survey.md)（LeanPolish 与 Lean 工具）、[rh-community-cleanup.md](rh-community-cleanup.md)（RH 社区实测）。分层的目标与判断见 [layered-plan.md](layered-plan.md)。
+适用于任何规模与来源的 Lean 仓库；按规模（单个定理 / 文件 / 小仓库 / 大仓库）与来源（精心维护的库 / 人写研究仓库 / 模型生成的证明 / 模型生成的大型开发）选路线的表见 [`../methods/README.md`](../methods/README.md)。来源见 [literature.md](literature.md)（跨系统文献）、[survey.md](survey.md)（LeanPolish 与 Lean 工具）与 [`../cases/`](../cases/README.md)（按规模 × 来源索引的案例）。下文里带 PR 编号或 Zulip 链接的数字都来自大仓库示例（Lean RH 开发，模型生成），只说明那一格。分层的目标与判断见 [layered-plan.md](layered-plan.md)。
 
 ## 核心判断
 
-1. **先冻结裁判，再动代码。** 每一步的正确性都靠"陈述不变、公理不增、内核接受"这一个判定；判定所依据的文件（Challenge、comparator 配置、导出目标）必须先冻结。RH 仓库用 CI 禁止任何 PR 改这些文件，这是整个流程能放手自动化的前提。
-2. **大头按顺序是：删不可达 → 去重 → 换 Mathlib → 再删不可达。** 这几步都是机械的，可脚本化、可在新基线上重新生成，收益也最大（RH：S1 删未用声明 −16.2% 声明、#295 去重约 1.7 万处、#324 合并文件 148k → 62k）。tactic 级的精简排在后面。
+1. **先冻结裁判，再动代码。** 每一步的正确性都靠"陈述不变、公理不增、内核接受"这一个判定；判定所依据的文件（Challenge、comparator 配置、导出目标）必须先冻结。Metamath 的最小化显式禁止引入新公理；大仓库示例（RH）用 CI 禁止任何 PR 改这些文件，这是放手自动化的前提。
+2. **收益的大小与顺序取决于来源。** 对以几个最终定理为目标的仓库，大头是删不可达 → 去重 → 换 Mathlib → 再删不可达，都是机械的、可脚本化（大仓库示例 RH：删未用声明 −16.2%、去重约 1.7 万处）；对模型生成的竞赛证明，大头在证明内部的符号 pass（约 −20%）；对精心维护的库，几乎只剩流程与构建上的收益（LeanPolish 在 Mathlib 上 0.53%）。
 3. **每类变换单独成批，按依赖锥切片，批内全自动、批间串行合并。** 验证的单位是"被改模块加上它的下游锥体"；只改证明体时，module system 能把下游重编截掉。
-4. **度量要选不会被 import 展开干扰的指标。** RH 的总行数因为 `import Mathlib` 展开凭空多了 560 万行，文件数又因为合并模块大降；真正反映内容多少的是正文行、声明数和依赖闭包大小，反映成本的是冷构建 CPU 小时和峰值内存。
+4. **度量要选不会被 import 展开、长行或合并文件干扰的指标。** 反映内容多少的是正文行、命题个数和依赖闭包大小，反映成本的是冷构建 CPU 小时和峰值内存（大仓库示例 RH：`import Mathlib` 展开一次多出约 560 万行，合并模块让文件数降了一半多而内容几乎不变）。动手前先算结构指标，判断来源（[`../cases/profiles.md`](../cases/profiles.md)）。
 
 ## 一、优化思路（按"收益 × 安全 ÷ 成本"排序）
 

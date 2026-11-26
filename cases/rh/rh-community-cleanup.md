@@ -4,7 +4,7 @@
 
 §0 的快照是 2026-11-26 03:00 UTC（社区仓库 `main` 为 `b7642ae`，`alpoge` 为 `756a702`；MIT 短版本核验页为 02:50 UTC 版，全部检查已结束）；§1 起是 `alpoge` 线的历史，快照为 2026-11-25（当时的 `main` 为 `75e2012`，Zulip 消息到 11-25 08:00 UTC）。对象是 2026 年 11 月 Alpöge 与 Claude 发布的 Lean 4 开发：它陈述了 Mathlib 的 `RiemannHypothesis` 和 Dirichlet L 函数的 GRH 形式，第三方报告已做机器核验，数学部分尚无人审阅。社区清理在 [leanprover-community/riemann-hypothesis][repo] 进行，讨论在 Lean Zulip 的 "Riemann Hypothesis" 频道（2026-11-25 从 #general 迁入，话题改名为 "Cleaning up the proof" 等）。
 
-**口径。** "本仓库测"是 [`../scripts/rh_repo_stats.py`](../scripts/rh_repo_stats.py) 在一份 `git clone` 上只读 Git 对象数出来的（没有构建，数据在 [`../data/`](../data/)）；"据报告"是 Zulip 或 PR 里的说法，没有独立复核。行数分三种：总行数；正文行（去掉空行、`import` 行和 `module` 行）；theorem/lemma 行（以 `theorem`/`lemma` 开头的行，与 Shore 的声明计数口径不同，只用于前后对比）。
+**口径。** "本仓库测"是 [`../scripts/rh_repo_stats.py`](../../scripts/rh_repo_stats.py) 在一份 `git clone` 上只读 Git 对象数出来的（没有构建，数据在 [`../data/`](../../data/)）；"据报告"是 Zulip 或 PR 里的说法，没有独立复核。行数分三种：总行数；正文行（去掉空行、`import` 行和 `module` 行）；theorem/lemma 行（以 `theorem`/`lemma` 开头的行，与 Shore 的声明计数口径不同，只用于前后对比）。
 
 ## 0 2026-11-25 的切换（最新）
 
@@ -16,7 +16,7 @@
 
 ### 新的核心判断
 
-1. **最大的削减不再来自逐步清理，而来自重写。** 定理 + 引理：原始 818,755 个，可读版 18,227 个，紧凑版 7,088 个；同期 `alpoge` 线到第 23 批是正文行 −23.3%、theorem/lemma 行 −30.3%（本仓库测）。逐步清理的上限约两到三倍，重写拿到了两个数量级（见 [grh-compact-vs-original](grh-compact-vs-original.md) 与 [`../methods/`](../methods/README.md)）。
+1. **最大的削减不再来自逐步清理，而来自重写。** 定理 + 引理：原始 818,755 个，可读版 18,227 个，紧凑版 7,088 个；同期 `alpoge` 线到第 23 批是正文行 −23.3%、theorem/lemma 行 −30.3%（本仓库测）。逐步清理的上限约两到三倍，重写拿到了两个数量级（见 [grh-compact-vs-original](grh-compact-vs-original.md) 与 [`../methods/`](../../methods/README.md)）。
 2. **验证的差别来自规模。** `alpoge` 线没有人报告过端到端核验；两个短版本发布当天就被 MIT 用六个检查器检查完，`lake comparator --paranoid` 对两版都通过（紧凑版两台机器，可读版一台） [D18]。我们在断网沙箱里独立构建紧凑版通过（Mathlib 为预建副本），`#print axioms` 只有三条标准公理（[grh-compact-reliability](grh-compact-reliability.md) §6）。
 3. **新数学的风险转移了。** 短版本换了多处子论证（去掉奇点消解、Vandiver 弱形式、patching、Hida、局部 Langlands 等） [z643717520]，原始版本的核验不能转给它们；它们靠自己的核验，数学同样无人审阅。
 4. **社区以可读版为准。** 紧凑版难读，也有人批评它是在刷行数；可读版上清理从 A 层的机械路线重新开始（Anton Mellit 数出约 2.3 万个声明中 1,151 个未用 [z643723346]）。
@@ -224,11 +224,11 @@
 [#5652]: https://github.com/leanprover-community/riemann-hypothesis/pull/5652
 [#5657]: https://github.com/leanprover-community/riemann-hypothesis/pull/5657
 [#5769]: https://github.com/leanprover-community/riemann-hypothesis/pull/5769
-[D9]: ../REFERENCES.md
-[D11]: ../REFERENCES.md
-[D16]: ../REFERENCES.md
-[D17]: ../REFERENCES.md
-[D18]: ../REFERENCES.md
+[D9]: ../../REFERENCES.md
+[D11]: ../../REFERENCES.md
+[D16]: ../../REFERENCES.md
+[D17]: ../../REFERENCES.md
+[D18]: ../../REFERENCES.md
 [z643702366]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines/near/643702366
 [z643715299]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines/near/643715299
 [z643717520]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines/near/643717520

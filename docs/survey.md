@@ -2,13 +2,13 @@
 
 **Summary (English).** LeanPolish (an ICLR 2027 submission) and its contemporaries (LeanLean, Leanify, AXLE, Lean Refactor, Proof-Refactor, ProofOptimizer, ImProver), and the built-in Lean / Mathlib v4.35 tools for cleanup: linters, TacticAnalysis, `lake shake`, `lake comparator`, `lake check`, with granularity, correctness guarantee and cost. The text is in Chinese.
 
-快照 2026-11-25。内容：LeanPolish 及同期 ICLR 2027 投稿，Lean / Mathlib 现成工具的粒度与正确性保证。跨系统的论文（Coq/Rocq、Isabelle、HOL、Mizar、Metamath、证明论）按方法与粒度整理在 [literature.md](literature.md)；Lean RH 开发的社区清理在 [rh-community-cleanup.md](rh-community-cleanup.md)；优化思路与工程流水线在 [ideas-and-engineering.md](ideas-and-engineering.md)。编号出处见 [`../REFERENCES.md`](../REFERENCES.md)。
+快照 2026-11-25。内容：LeanPolish 及同期 ICLR 2027 投稿，Lean / Mathlib 现成工具的粒度与正确性保证。跨系统的论文（Coq/Rocq、Isabelle、HOL、Mizar、Metamath、证明论）按方法与粒度整理在 [literature.md](literature.md)；Lean RH 开发的社区清理在 [rh-community-cleanup.md](../cases/rh/rh-community-cleanup.md)；优化思路与工程流水线在 [ideas-and-engineering.md](ideas-and-engineering.md)。编号出处见 [`../REFERENCES.md`](../REFERENCES.md)。
 
 ## 0. 核心判断
 
 1. **LeanPolish 是 ICLR 2027 的在审投稿**（不是已接收论文）：arXiv [2609.38384][lp-arxiv]，OpenReview forum `yRmdNlDhJS`，标注为 "ICLR 2027 Conference Submission"。它本质上是一个**符号式、局部、逐处编译把关**的压缩器，加一份已验证编辑的数据集；LLM 只是在它之上做排序和补充。
 2. **收益取决于代码来源。** 同一个 LeanPolish 管线：Mathlib（人写）token 只省 0.53%，Goedel-Prover 生成的证明省 20.0%，miniF2F 省 22.6%（[headline.json][lp-headline]）。模型写成的研究仓库应按"生成代码"预期。
-3. **仓库级的大头在依赖结构，不在语法。** LeanLean（ICLR 2027 投稿，64 个真实仓库）报告压缩主要来自"让原本用到的声明变得不再需要"，语法优化只有最强模型才有明显贡献。这与 Lean RH 开发的社区清理一致（删不可达模块、声明级裁剪、同型去重，见 [rh-community-cleanup.md](rh-community-cleanup.md)）。
+3. **仓库级的大头在依赖结构，不在语法。** LeanLean（ICLR 2027 投稿，64 个真实仓库）报告压缩主要来自"让原本用到的声明变得不再需要"，语法优化只有最强模型才有明显贡献。这与 Lean RH 开发的社区清理一致（删不可达模块、声明级裁剪、同型去重，见 [rh-community-cleanup.md](../cases/rh/rh-community-cleanup.md)）。
 4. **删除类和替换类两种符号 pass 互补。** LeanPolish（替换菜单）与 AXLE `simplify_theorems`（删无用 tactic/have）在 miniF2F 上分别省 29.8% 和 27.1%，串起来省 35.9%（[AXLE 对比][lp-axle]）。Mathlib 的 linter 已经覆盖了删除类的大部分，成本最低。
 5. **正确性靠重新编译加陈述比对，不靠编辑器。** 所有可靠的工具都是"生成候选 → 重新 elaborate 并过内核 → 检查陈述和公理不变"。用 comparator 验证目标定理的仓库已经有这个闸门，可以直接接任何编辑器。
 
@@ -99,7 +99,7 @@ Mathlib 的 tactic 分析框架（Baanen、van de Meent，2025）在 InfoTree �
 
 ### 3.6 死代码与重复声明（仓库粒度）
 
-- **没有仓库级的"未用声明"工具。** Lean 核心、Mathlib 都没有；mathlib3 的 `#list_unused_decls` 没有经核实的 Lean 4 移植。单文件内有 Batteries 的 `#show_unused d₁ d₂`（标出当前文件里目标用不到的声明）和 `#print dependents`（[ShowUnused][b-showunused]）。RH 社区用的是自建的内核依赖图脚本（见 [rh-community-cleanup.md](rh-community-cleanup.md) §4）。做法是从保留根出发遍历常量依赖（`Expr.getUsedConstants`），内核图之外 elaboration 用到的实例、simp 引理要靠重编确认。
+- **没有仓库级的"未用声明"工具。** Lean 核心、Mathlib 都没有；mathlib3 的 `#list_unused_decls` 没有经核实的 Lean 4 移植。单文件内有 Batteries 的 `#show_unused d₁ d₂`（标出当前文件里目标用不到的声明）和 `#print dependents`（[ShowUnused][b-showunused]）。RH 社区用的是自建的内核依赖图脚本（见 [rh-community-cleanup.md](../cases/rh/rh-community-cleanup.md) §4）。做法是从保留根出发遍历常量依赖（`Expr.getUsedConstants`），内核图之外 elaboration 用到的实例、simp 引理要靠重编确认。
 - `@[deprecated]` 加别名是 Mathlib 删除、改名公开声明的标准做法；`lake shake` 的 `--explain` 可以反查某个导入为何不能删。
 - 重复声明：按类型（规范化后）建索引找同型声明；对每条自有引理在 Mathlib 下试 `exact?` 是找"Mathlib 已有"的低成本办法。两者都要自写脚本。
 
