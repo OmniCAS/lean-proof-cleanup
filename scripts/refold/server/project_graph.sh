@@ -31,6 +31,8 @@ body = re.sub(r"^import .*\n", "", s, flags=re.M)
 open(p, "w", encoding="utf-8").write("\n".join(imports) + "\nimport Lean\n" + body)
 print("modules imported:", len(imports))
 PY
+# importing tens of thousands of modules opens several files per module
+ulimit -n "$(ulimit -Hn)" 2>/dev/null || true
 START=$(date +%s)
 unshare -r -n taskset -c "$CPUS" nice -n 10 lake env lean "$TMP" 2>&1 | grep -v "^$" | tail -5
 echo "graph seconds: $(( $(date +%s) - START ))"

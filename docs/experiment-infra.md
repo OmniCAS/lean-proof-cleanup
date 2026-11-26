@@ -45,6 +45,7 @@
 |---|---|---|
 | 整库构建（绑核、降优先级、无网络、计时、内存采样） | `server/build_project.sh`、`server/memsample.py` | 墙钟、CPU、每个模块的秒数、同时的 Lean 进程数、内存、构建目录大小 |
 | 整库声明依赖图（从环境读，辅助常量归到所属声明） | `lean/ProjectGraph.lean`、`server/project_graph.sh`、`graph_summary.py` | 每个用户声明一行（种类、模块、行范围、用到的声明）；从标题定理出发的可达性；被 0 / 1 / 2+ 处使用的定理数 |
+| 特大工程的标题定理闭包（不建环境，逐模块读 `.olean`） | `lean/ClosureFromOleans.lean` | 每个库的定理数、可达数、只用一次的数。两万多个模块系统的模块一次导入要六万多个内存映射，超过内核默认上限（65,530），所以不能用上一行的办法 |
 | 单个对象的闸门 | `gate.py`、`lean/GateTools.lean` | G1–G4 的结论与构建用时 |
 | 单个对象的度量 | `metrics.py`（源码口径同 `../scripts/profile_lean_trees.py`） | 行、代码行、gzip 字节、定理与定义个数、单次使用的定理数、证明长度分布、策略密度 |
 | 候选筛选（不构建） | `candidate_graph.py`、`reference_counts.py` | 导入图的闭包、层数、最长链；按短名估计的引用次数 |
@@ -79,5 +80,7 @@ G2 是 `lake comparator` 在“陈述相等”这一项上的替代，不做独�
 |---|---|---|---|---|---|---|---|
 | `openai/ten-proofs` @ `94bc0feb`（十个单文件证明，Lean v4.32.0） | 10 | 19.8 分钟 | 4.0 + 0.05 核·时 | 955 秒 | 9 | 约 25 GB（单进程最大 15.6 GB） | 0.7 GB |
 | `openai/NavierStokesAndEuler` @ `f9e8bc5b`（Lean v4.34.0-rc2） | 2,657 | 17.9 分钟 | 5.8 + 0.9 核·时 | 157 秒 | 32 | 约 12 GB | 8.7 GB |
+| Mathlib `56a00585`（Lean v4.35.0，从源码） | 9,030 | 23.3 分钟 | 9.7 + 1.5 核·时 | 73 秒 | 32 | 约 7 GB | — |
+| `AxiomMath/Mordell` @ `82a30cb7` 加上它导入的 `AxiomMath/Stacks` 模块（Lean v4.35.0） | 21,637 | 3 小时 17 分钟 | 88.5 + 7.8 核·时 | 1,284 秒 | 32 以上（同机还有我们别的任务） | 约 78 GB（单进程最大 18.3 GB） | 84 GB |
 
 同一批对象在笔记本上的限时探测（没有建完）见 [`../experiments/README.md`](../experiments/README.md) 的候选一节。

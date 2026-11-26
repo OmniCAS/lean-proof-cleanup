@@ -9,7 +9,9 @@ is read from proof terms, it cannot see a name that is only *mentioned* in sourc
   1. before deleting, a declaration is kept if its short name still occurs as a token in the
      source that would remain (in its own module or in a module that imports it), or if it
      carries an attribute (`@[simp]`, `@[ext]`, `@[fun_prop]`, …): a `simp` lemma proved by `rfl`
-     rewrites definitionally and leaves no trace in the proof terms that used it;
+     rewrites definitionally and leaves no trace in the proof terms that used it; instances are
+     always kept (a coercion instance such as `CoeFun` is unfolded during elaboration, so the
+     terms it produced do not mention it);
   2. after deleting, the project is built; every declaration named in an "unknown identifier /
      constant" error is restored together with everything it needs, other errors restore the
      deleted declarations around the error line; this repeats until the build passes.
@@ -125,7 +127,9 @@ class Project:
                 continue
             head = "\n".join(self.src[r["m"]][r["x0"] - 1:r["l0"] + 3])
             head = re.sub(r"/--.*?-/", "", head, flags=re.S).lstrip()
-            if head.startswith("@["):
+            if r["k"] == "instance" or re.match(r"(@\[[^\]]*\]\s*)?((private|protected|noncomputable|scoped|local)\s+)*instance\b", head):
+                self.closure_keep(r["i"], "is an instance")
+            elif head.startswith("@["):
                 self.closure_keep(r["i"], "has an attribute")
         down = self.importers()
         changed = True
@@ -182,6 +186,7 @@ def main():
     ap.add_argument("--roots", nargs="+", required=True); ap.add_argument("--build", default="")
     ap.add_argument("--max-rounds", type=int, default=12); ap.add_argument("--report")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--log-dir", help="save the build output of every round there")
     ap.add_argument("--keep-list", help="file of declaration names to keep (read at start, rewritten after every round); "
                                         "lets an interrupted run resume from the original sources")
     a = ap.parse_args()
@@ -205,7 +210,15 @@ def main():
             p = subprocess.run(a.build, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=pr.root)
             out = p.stdout.decode("utf-8", "replace")
             rounds += 1
-            errs = re.findall(r"^error: (\S+?\.lean):(\d+):\d+: (.*)$", out, re.M)
+            if a.log_dir:
+                os.makedirs(a.log_dir, exist_ok=True)
+                with open(os.path.join(a.log_dir, "round%02d.log" % rounds), "w", encoding="utf-8") as fh:
+                    fh.write(out)
+            errs = []
+            for mm in re.finditer(r"^error: (\S+?\.lean):(\d+):\d+: (.*)$", out, re.M):
+                nxt = re.search(r"^(?:error|warning|info|⚠|✖|✔|ℹ)", out[mm.end():], re.M)
+                block = out[mm.end():mm.end() + (nxt.start() if nxt else 1500)][:1500]
+                errs.append((mm.group(1), mm.group(2), mm.group(3), block))
             print("round %d: deleted %d, exit %d, errors %d" % (rounds, total - len(pr.keep), p.returncode, len(errs)), flush=True)
             if p.returncode == 0 and not errs:
                 break
@@ -217,9 +230,14 @@ def main():
             for r in pr.rows:
                 if r["i"] not in pr.keep:
                     by_short[r["n"].split(".")[-1]].append(r["i"])
-            for path, line, msg in errs:
+            by_type_use = None
+            for path, line, msg, block in errs:
                 m = path_mod.get(os.path.normpath(path))
                 names = re.findall(r"`([^`]+)`", msg) if re.search(r"[Uu]nknown|not found|Invalid field|does not contain", msg) else []
+                # with `autoImplicit`, a missing name in a signature becomes a bound variable and the
+                # error only says so in its hint
+                names += re.findall(r"identifier `([^`]+)` is unknown", block)
+                names += re.findall(r"(?:Local variable|Variable) `([^`]+)` (?:has no definition|is not a proposition)", msg + " " + block)
                 hit = False
                 for nm in names:
                     for part in reversed(nm.split(".")):
@@ -235,10 +253,33 @@ def main():
                 # deleted declarations of this module, of the modules it imports, of everything
                 # it imports transitively.
                 level[m] = level.get(m, 0) + 1
+                if level[m] == 1:
+                    # first try: deleted declarations (in this module or anything it imports) whose
+                    # statement mentions a constant that appears in the error text, i.e. lemmas and
+                    # instances about the objects of the stuck goal
+                    if by_type_use is None:
+                        by_type_use = collections.defaultdict(list)
+                        for r in pr.rows:
+                            if r["i"] not in pr.keep:
+                                for t in r["t"]:
+                                    by_type_use[pr.by_i[t]["n"].split(".")[-1]].append(r["i"])
+                    up, st = {m}, [m]
+                    while st:
+                        for y in pr.imports[st.pop()]:
+                            if y not in up:
+                                up.add(y); st.append(y)
+                    got = 0
+                    for tok in set(TOKEN.findall(msg + " " + block)):
+                        for i in by_type_use.get(tok, []):
+                            if pr.by_i[i]["m"] in up and i not in pr.keep:
+                                pr.closure_keep(i, "build error in a dependent proof (mentions the goal's constants): " + msg[:30])
+                                got += 1
+                    if got:
+                        continue
                 scope = {m}
-                if level[m] >= 2:
-                    scope |= set(pr.imports[m])
                 if level[m] >= 3:
+                    scope |= set(pr.imports[m])
+                if level[m] >= 4:
                     st = list(pr.imports[m])
                     while st:
                         x = st.pop()

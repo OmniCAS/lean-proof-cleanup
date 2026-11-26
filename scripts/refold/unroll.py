@@ -459,7 +459,7 @@ def main():
     u = Unroller(a.file, a.graph, a.headlines.split(","), [s for s in a.skip.split(",") if s])
     theorems = [d for d in u.decls.values() if d.kind == "theorem"]
     initial = len(u.parent)
-    print("theorems %d, inline candidates %d" % (len(theorems), initial))
+    print("theorems %d, inline candidates %d" % (len(theorems), initial), flush=True)
     rounds, log = 0, []
     while True:
         u.carry_heartbeats()
@@ -470,7 +470,7 @@ def main():
         open(a.file, "w", encoding="utf-8").write(text)
         rc, errs, out = build(a.build, a.file)
         rounds += 1
-        print("round %d: inlined %d, exit %d, errors %d" % (rounds, len(u.parent), rc, len(errs)))
+        print("round %d: inlined %d, exit %d, errors %d" % (rounds, len(u.parent), rc, len(errs)), flush=True)
         if rc == 0 and not errs:
             break
         if not errs or rounds >= a.max_rounds:
@@ -540,7 +540,7 @@ def main():
             open(a.file, "w", encoding="utf-8").write(text)
             rc, errs, out = build(a.build, a.file)
             ok = rc == 0 and not errs
-            print("retry %s: %s" % (n.split(".")[-1], "kept" if ok else "still fails"))
+            print("retry %s: %s" % (n.split(".")[-1], "kept" if ok else "still fails"), flush=True)
             if ok:
                 u.reasons.pop(n, None)
                 log.append({"round": "retry", "decl": n, "action": "reinstated"})

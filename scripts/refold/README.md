@@ -8,7 +8,8 @@
 | `metrics.py` | every stage | Source metrics (same conventions as `../profile_lean_trees.py`) and declaration-graph metrics read from the built environment |
 | `lean/GateAnalysis.lean` | 1 mechanical | Theorems with identical types; aliases |
 | `lean/ProjectGraph.lean`, `graph_summary.py`, `server/project_graph.sh` | 1 mechanical | Declaration graph of a whole multi-file project and its reachability summary |
-| `prune_unreachable.py` | 1 mechanical | Delete declarations the headline theorems do not reach, with build feedback |
+| `lean/ClosureFromOleans.lean` | 1 mechanical | Headline closure of a very large project read one module at a time from its `.olean` files (no environment, so no limit on the number of modules) |
+| `prune_unreachable.py` | 1 mechanical | Delete declarations the headline theorems do not reach, with build feedback; keeps instances, attribute-tagged declarations and names still mentioned in source |
 | `unroll.py` | 2 unroll | Inline single-use theorems into their only user as local `have` blocks, with build feedback |
 | `unroll_project.py` | 2 unroll | The same for a multi-file project, module by module in parallel |
 | `lean/Golf.lean`, `golf_blocks.py` | 3 simplify | Probe every proof block for a one-line automation replacement; apply and verify |
