@@ -6,8 +6,9 @@ https://github.com/leanprover-community/riemann-hypothesis and writes three file
 
   rh_revision_stats.csv   per revision: .lean files, total lines, body lines, import lines,
                           theorem/lemma lines, Lean toolchain
-  rh_mainline_merges.csv  every first-parent commit from BASE to HEAD: date, PR number,
-                          files changed, lines added and deleted (no renames detected)
+  rh_mainline_merges.csv  every first-parent commit of each line (the alpoge cleanup line and
+                          the new main): date, PR number, files changed, lines added and
+                          deleted (no renames detected)
   rh_statements.json      SHA-256 of each of the five final statements (whitespace collapsed),
                           per revision, and whether they equal the original archive's
 
@@ -21,11 +22,13 @@ Definitions:
 Usage:
   git clone https://github.com/leanprover-community/riemann-hypothesis.git rh
   python3 scripts/rh_repo_stats.py --repo rh --out data
-  python3 scripts/rh_repo_stats.py --repo rh --out data --head 75e2012dcc6 \
-      --rev 40e56bab:original --rev 7cce738:snapshot-2026-11-22
+  python3 scripts/rh_repo_stats.py --repo rh --out data \
+      --rev 40e56bab:original --rev origin/alpoge:alpoge --rev origin/main:main \
+      --line alpoge:7cce738:origin/alpoge
 
 Revisions given with --rev are written in the order given; with none, a default list of
-the commits discussed in docs/rh-community-cleanup.md is used.
+the commits discussed in docs/rh-community-cleanup.md is used. In a fresh clone the alpoge
+line is the remote branch origin/alpoge; the old main is no longer the default branch.
 """
 import argparse
 import csv
@@ -39,11 +42,18 @@ from pathlib import Path
 
 DEFAULT_REVS = [
     ("40e56bab", "original archive"),
-    ("7cce738", "2026-11-22 snapshot (after #93)"),
-    ("14f383e5ede", "#66: Lean 4.36, module system, unreachable files deleted"),
-    ("ecc801f3f81^", "after #185 (Lean 4.37.0-rc1) and #221"),
-    ("ecc801f3f81", "#324: thin wrappers deleted, modules clumped"),
-    ("HEAD", "head"),
+    ("7cce738", "alpoge line: 2026-11-22 snapshot (after #93)"),
+    ("14f383e5ede", "alpoge line: #66, Lean 4.36, module system, unreachable files deleted"),
+    ("ecc801f3f81^", "alpoge line: after #185 (Lean 4.37.0-rc1) and #221"),
+    ("ecc801f3f81", "alpoge line: #324, thin wrappers deleted, modules clumped"),
+    ("75e2012dcc6", "alpoge line: 2026-11-25 morning (then main)"),
+    ("756a70250dc", "alpoge line: batch 23 (branch alpoge)"),
+    ("47fcde57c49", "new main: grh-lean readable edition moved to the root"),
+    ("b7642ae1317", "new main: after batches m1-m4 and the Lean 4.37.0-rc1 bump"),
+]
+DEFAULT_LINES = [
+    ("alpoge", "7cce738", "756a70250dc"),
+    ("main", "47fcde57c49", "b7642ae1317"),
 ]
 FINAL = [
     "riemannHypothesis",
@@ -96,7 +106,7 @@ def revision_row(repo, rev, label):
     }
 
 
-def mainline_merges(repo, base, head):
+def mainline_merges(repo, line_name, base, head):
     out = git(repo, "-c", "diff.renameLimit=0", "log", "--first-parent", "--no-renames",
               "--format=@@%H|%ct|%s", "--shortstat", f"{base}..{head}")
     rows, cur = [], None
@@ -104,7 +114,7 @@ def mainline_merges(repo, base, head):
         if line.startswith("@@"):
             sha, date, subject = line[2:].split("|", 2)
             m = re.search(r"(?:pull request #|PR #|\(#)(\d+)", subject)
-            cur = {"commit": sha[:11], "committer_date_utc": utc(date),
+            cur = {"line": line_name, "commit": sha[:11], "committer_date_utc": utc(date),
                    "pr_number": int(m.group(1)) if m else "",
                    "files_changed": 0, "insertions": 0, "deletions": 0}
             rows.append(cur)
@@ -139,21 +149,21 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--repo", required=True, help="local clone of the community repository")
     ap.add_argument("--out", required=True, help="output directory")
-    ap.add_argument("--base", default="7cce738", help="first-parent history starts after this")
-    ap.add_argument("--head", default="HEAD", help="revision treated as head")
     ap.add_argument("--rev", action="append", default=[],
                     help="REV:LABEL, repeatable; default: the commits in the report")
+    ap.add_argument("--line", action="append", default=[],
+                    help="NAME:BASE:HEAD, repeatable; first-parent commits of BASE..HEAD; "
+                         "default: the alpoge line and the new main")
     a = ap.parse_args()
     repo, out = Path(a.repo), Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    head = git(repo, "rev-parse", a.head).strip()
-
     revs = [tuple(r.split(":", 1)) if ":" in r else (r, r) for r in a.rev] or DEFAULT_REVS
-    revs = [(head if r == "HEAD" else r, label) for r, label in revs]
     rows = [revision_row(repo, r, label) for r, label in revs]
     write_csv(out / "rh_revision_stats.csv", rows)
 
-    write_csv(out / "rh_mainline_merges.csv", mainline_merges(repo, a.base, head))
+    lines = [tuple(x.split(":", 2)) for x in a.line] or DEFAULT_LINES
+    merges = [m for name, base, head in lines for m in mainline_merges(repo, name, base, head)]
+    write_csv(out / "rh_mainline_merges.csv", merges)
 
     original = statements(repo, revs[0][0])
     st = {"definition": "sha256 of the statement text between the theorem name and `:=`, "
