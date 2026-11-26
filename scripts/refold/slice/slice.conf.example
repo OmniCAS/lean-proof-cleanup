@@ -1,0 +1,9 @@
+# Configuration of slice_server.sh (copy to slice.conf next to the script on the build server).
+WS=$HOME/refold                                   # workspace: tools/refold, work/, results/, toolchains/
+PROJECT=myproject                                 # work/$PROJECT is the base working copy (a git repository, built)
+TOOLCHAIN=$WS/toolchains/lean-4.34.0-rc2-linux    # directory with bin/lake
+BASE_REF=s2-unroll                                # tag of the state the blocks start from
+GRAPH=$WS/results/$PROJECT/graph-s2.jsonl         # declaration graph of that state (lean/ProjectGraph.lean)
+ROOTS="My.headline_theorem Other.headline_theorem"
+COPY_PREFIX=$PROJECT-                             # block NAME gets the working copy work/$COPY_PREFIX$NAME
+SUBJECT_OF() { echo main; }                       # contract name -> subject key of refold-subjects.json to gate

@@ -17,6 +17,7 @@
 | `prompts/` | 3–5 | Briefs given to rewriting agents (`rewrite-block.md` is the template for one block behind a contract) |
 | `dominators.py` | 3–5 | Sub-developments with a one-statement interface: dominator tree of the declaration graph; `--show NAME --block FILE` writes a block (contract theorem, the declarations needed only for it, their line ranges); `--free-dead-users` also puts into the block the unreachable declarations that use it, which would otherwise pin its statements |
 | `block_gate.py` | 3–5 | Gate for rewriting one block behind its contract: the subject's gate, the contract theorem's statement fingerprint against the base, and locality of the change (every changed line inside the block), so that blocks rewritten separately can be merged |
+| `slice/slice.sh`, `slice/slice_server.sh`, `slice/slice.conf.example` | 3–5 | Block workflow for a project that is built on a remote server: one server working copy per block (the dependencies' build products shared), files edited locally, builds, scratch checks and the block gate run remotely through one command |
 | `candidate_graph.py`, `reference_counts.py` | choosing subjects | Import-graph closure and name-reference estimates from source, without building |
 | `server/` | infra | Fetch and verify toolchains and sources, fetch Mathlib oleans, timed builds with memory sampling |
 
