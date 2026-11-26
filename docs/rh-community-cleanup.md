@@ -17,7 +17,7 @@
 ### 新的核心判断
 
 1. **最大的削减不再来自逐步清理，而来自重写。** 定理 + 引理：原始 818,755 个，可读版 18,227 个，紧凑版 7,088 个；同期 `alpoge` 线到第 23 批是正文行 −23.3%、theorem/lemma 行 −30.3%（本仓库测）。逐步清理的上限约两到三倍，重写拿到了两个数量级（见 [grh-compact-vs-original](grh-compact-vs-original.md) 与 [`../methods/`](../methods/README.md)）。
-2. **验证的差别来自规模。** `alpoge` 线从未有过端到端核验；两个短版本发布当天就被 MIT 用六个检查器检查完，紧凑版的 `lake comparator --paranoid` 在两台机器上通过 [D18]。我们在断网沙箱里独立构建紧凑版通过（Mathlib 为预建副本），`#print axioms` 只有三条标准公理（[grh-compact-reliability](grh-compact-reliability.md) §6）。
+2. **验证的差别来自规模。** `alpoge` 线没有人报告过端到端核验；两个短版本发布当天就被 MIT 用六个检查器检查完，紧凑版的 `lake comparator --paranoid` 在两台机器上通过 [D18]。我们在断网沙箱里独立构建紧凑版通过（Mathlib 为预建副本），`#print axioms` 只有三条标准公理（[grh-compact-reliability](grh-compact-reliability.md) §6）。
 3. **新数学的风险转移了。** 短版本换了多处子论证（去掉奇点消解、Vandiver 弱形式、patching、Hida、局部 Langlands 等） [z643717520]，原始版本的核验不能转给它们；它们靠自己的核验，数学同样无人审阅。
 4. **社区以可读版为准。** 紧凑版难读，也有人批评它是在刷行数；可读版上清理从 A 层的机械路线重新开始（Anton Mellit 数出约 2.3 万个声明中 1,151 个未用 [z643723346]）。
 
