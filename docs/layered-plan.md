@@ -2,7 +2,7 @@
 
 **Summary (English).** A layered plan for cleaning up Lean proofs at four granularities (single theorem, single file, small repository, large repository): the goal of each layer, its means, how to check that semantics are unchanged (statements unchanged, no new axioms, via comparator and `#print axioms`), how far it can be automated, and the problems specific to large repositories (build time, dependency graph, incremental checking, parallel and distributed builds). The text is in Chinese.
 
-配套文档：[survey.md](survey.md)（LeanPolish 与 Lean 工具）、[literature.md](literature.md)（跨系统文献）、[rh-community-cleanup.md](rh-community-cleanup.md)（Lean RH 开发的社区清理）。**优化思路的排序和工程流水线见 [ideas-and-engineering.md](ideas-and-engineering.md)**，本文只给分层目标与判断。
+配套文档：[survey.md](survey.md)（LeanPolish 与 Lean 工具）、[literature.md](literature.md)（跨系统文献）、[rh-community-cleanup.md](rh-community-cleanup.md)（Lean RH 开发的社区清理）。**优化思路的排序和工程流水线见 [ideas-and-engineering.md](ideas-and-engineering.md)；23 条路线各自的做法、证据与效果见 [`../methods/`](../methods/README.md)（其中有路线与四个层级的对应表）**，本文只给分层目标与判断。
 
 ## 核心判断
 
@@ -19,6 +19,7 @@
 - **抽引理要按复用次数验收**，不能按提出了多少个（*Library Learning Doesn't*）。
 - **RH 主干的经验**：文件 −66%、正文行 −21%、theorem/lemma 行 −28%，大头来自可达性裁剪、去重和合并模块；但清理后的主干至今没有端到端的 comparator 复核报告，只有"构建通过、陈述文件未改"。闸门应每批跑 comparator，而不是只在发布前。
 - **行数会被 import 展开严重干扰**（RH #185 凭空多出 560 万行），验收以正文行、声明数、闭包大小和冷构建 CPU 时间为准。
+- **机械路线有上限，重写没有走这几层。** grh-lean 在同一个证明骨架上重写，命题个数缩小 115 倍，而逐步清理的上限约两到三倍；对小仓库，当机械路线到顶后，按 C、D 层整体重写（展开再分块、通用化陈述、去包装层、换论证）是下一步，验收仍是同一道闸门（[grh-compact-vs-original.md](grh-compact-vs-original.md)）。
 
 ## 共用的语义不变闸门
 

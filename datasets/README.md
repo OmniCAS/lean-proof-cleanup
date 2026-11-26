@@ -1,6 +1,6 @@
 # Datasets and benchmarks
 
-**Summary (English).** A catalogue of public datasets and benchmarks that matter for cleaning up and compressing Lean proofs: what each measures, its licence, its size and how to fetch it. None of the third-party data is copied into this repository; `fetch.py` downloads each item from its own host. Our own derived data is in [`../data/`](../data/). Checked on 2026-11-25.
+**Summary (English).** A catalogue of public datasets and benchmarks that matter for cleaning up and compressing Lean proofs: what each measures, its licence, its size and how to fetch it. None of the third-party data is copied into this repository; `fetch.py` downloads each item from its own host. Our own derived data is in [`../data/`](../data/). Checked on 2026-11-25; grh-lean and the MIT verification files added on 2026-11-26.
 
 ## 目录
 
@@ -32,7 +32,9 @@
 |---|---|---|---|---|---|
 | rh-proof-dependencies（`rh-proof-dependencies`） | [james-shore/rh-proof-dependencies](https://github.com/james-shore/rh-proof-dependencies) | CC0-1.0 | 仓库约 44 MB | 从内核导出算出的五个最终定理的依赖闭包：被用声明、按目录的行数，v0.2.1 | `git clone` |
 | rh-proof-trimmed | [james-shore/rh-proof-trimmed](https://github.com/james-shore/rh-proof-trimmed) | 仓库自己的说明：Lean 源码属于原作者，发布时没有许可证 | 未查 | 只用机械步骤的分阶段裁剪，每阶段有回执（构建、nanoda、con-leche 比对） | 只给链接 |
-| 社区仓库（`rh-community`） | [leanprover-community/riemann-hypothesis](https://github.com/leanprover-community/riemann-hypothesis) | 未标注（源码发布时没有许可证） | 仓库约 1.07 GB | 清理的全部历史；`../scripts/rh_repo_stats.py` 的输入 | `fetch.py fetch rh-community --full` |
+| 社区仓库（`rh-community`） | [leanprover-community/riemann-hypothesis](https://github.com/leanprover-community/riemann-hypothesis) | `original` 与 `alpoge` 分支未标注（原始源码发布时没有许可证）；`main` 现为 grh-lean 可读版 | 仓库约 1.07 GB | 清理的全部历史（`original`、`alpoge`、新 `main`）；`../scripts/rh_repo_stats.py` 的输入 | `fetch.py fetch rh-community --full` |
+| grh-lean（`grh-lean`） | [lsernau/grh-lean](https://github.com/lsernau/grh-lean) | Apache-2.0（Copyright 2026 Anthropic, PBC） | 两个工程：可读版 `grh/` 805 个 `.lean` 文件、约 47.7 万行；紧凑版 `grh-compact/` 794 个文件、约 11.4 万行 | 原始开发的一次重写；本仓库 `data/versions_summary.json` 的输入之一 | `git clone` |
+| MIT 短版本核验文件（`mit-short-verification`） | [math.mit.edu/~drew/shortgrh](https://math.mit.edu/~drew/shortgrh/) | 未标注 | 日志与结果；两版导出各 4–5 GB | 构建、重放、外部内核、comparator 的逐项记录 | 只给链接 |
 | 原始版本的冻结镜像 | [homeowmorphism/riemann-hypothesis-original](https://github.com/homeowmorphism/riemann-hypothesis-original) | 同上 | 未查 | 原样保存的源码与预建缓存 | 只给链接 |
 | riemann-explorer | [bil022.github.io/riemann-explorer](https://bil022.github.io/riemann-explorer/) | 未标注 | — | 按支配树切分的 `riemannHypothesis` 依赖图浏览器（提交 `6c68212`，727,065 个声明） | 只给链接 |
 | OmniCAS 的固定副本 | [OmniCAS/riemann-hypothesis](https://github.com/OmniCAS/riemann-hypothesis)、[OmniCAS/riemann-hypothesis-omega](https://github.com/OmniCAS/riemann-hypothesis-omega) | 同上 | 未查 | 构建实验用的固定版本，见 [OmniCAS/lean-distributed-build](https://github.com/OmniCAS/lean-distributed-build) | 只给链接 |

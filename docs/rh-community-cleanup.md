@@ -1,20 +1,55 @@
 # Lean RH/GRH 开发的社区清理：进展与削减量
 
-**Summary (English).** How the community has cleaned up the November 2026 Lean development by Alpöge with Claude, whose five final statements are Mathlib's `RiemannHypothesis` and Dirichlet GRH forms: the efforts, their numbers, how they were checked, the dependency-closure lower bound, and what remains. Measured by us from Git objects at `75e2012` (2026-11-25): `.lean` files 174,793 → 59,254, body lines 14.6M → 11.6M, theorem/lemma lines 813k → 584k, the five statements unchanged; no end-to-end comparator run on the cleaned `main` has been reported. The development states RH and is reported machine-checked by third parties; its mathematics is unreviewed. The text is in Chinese.
+**Summary (English).** How the community has cleaned up the November 2026 Lean development by Alpöge with Claude, whose five final statements are Mathlib's `RiemannHypothesis` and Dirichlet GRH forms. On 2026-11-25 the picture changed: `lsernau/grh-lean` (Luke Sernau with colleagues at Anthropic, and Claude) published a rewrite in two editions, readable `grh/` (about 477k lines) and compact `grh-compact/` (about 113k lines); the community repository moved its old `main` to the branch `alpoge` and replaced `main` with the readable edition, on which cleanup has restarted. Section 0 gives the versions and how each was verified; the rest of the document is the history of the `alpoge` line (by our count from Git objects: `.lean` files 174,793 → 58,735, body lines −23.3% at batch 23, the five statements unchanged, no end-to-end check). Both short editions were checked by several independent kernels on the day they appeared. The developments state RH and are reported machine-checked by third parties; the mathematics is unreviewed. The text is in Chinese.
 
-快照 2026-11-25（社区仓库 HEAD `75e2012`，Zulip 消息到 11-25 08:00 UTC）。对象是 2026 年 11 月 Alpöge 与 Claude 发布的 Lean 4 开发：它陈述了 Mathlib 的 `RiemannHypothesis` 和 Dirichlet L 函数的 GRH 形式，第三方报告已做机器核验，数学部分尚无人审阅。社区清理在 [leanprover-community/riemann-hypothesis][repo] 进行，讨论在 Lean Zulip 的 "Riemann Hypothesis" 频道（2026-11-25 从 #general 迁入，话题改名为 "Cleaning up the proof" 等）。
+§0 的快照是 2026-11-26 03:00 UTC（社区仓库 `main` 为 `b7642ae`，`alpoge` 为 `756a702`；MIT 短版本核验页为 02:13 UTC 版）；§1 起是 `alpoge` 线的历史，快照为 2026-11-25（当时的 `main` 为 `75e2012`，Zulip 消息到 11-25 08:00 UTC）。对象是 2026 年 11 月 Alpöge 与 Claude 发布的 Lean 4 开发：它陈述了 Mathlib 的 `RiemannHypothesis` 和 Dirichlet L 函数的 GRH 形式，第三方报告已做机器核验，数学部分尚无人审阅。社区清理在 [leanprover-community/riemann-hypothesis][repo] 进行，讨论在 Lean Zulip 的 "Riemann Hypothesis" 频道（2026-11-25 从 #general 迁入，话题改名为 "Cleaning up the proof" 等）。
 
 **口径。** "本仓库测"是 [`../scripts/rh_repo_stats.py`](../scripts/rh_repo_stats.py) 在一份 `git clone` 上只读 Git 对象数出来的（没有构建，数据在 [`../data/`](../data/)）；"据报告"是 Zulip 或 PR 里的说法，没有独立复核。行数分三种：总行数；正文行（去掉空行、`import` 行和 `module` 行）；theorem/lemma 行（以 `theorem`/`lemma` 开头的行，与 Shore 的声明计数口径不同，只用于前后对比）。
 
-## 核心判断
+## 0 2026-11-25 的切换（最新）
 
-1. **目前最大的削减就在社区主仓库 `main` 上，不在某个 fork。** 本仓库测：从原始归档 `40e56bab` 到 HEAD `75e2012`，`.lean` 文件 174,793 → 59,254（−66.1%），正文行 14,621,937 → 11,577,635（−20.8%），theorem/lemma 行 813,194 → 583,779（−28.2%）。总行数只少 11.6%（17,374,215 → 15,351,223），因为 import 行从 909,822 涨到 2,027,398（`import Mathlib` 被展开成逐个模块的导入）。五个最终定理的陈述文本与原始归档逐字一致。
+### 发生了什么
+
+- 2026-11-25 21:26 UTC，Luke Sernau 在 Zulip 发布 [lsernau/grh-lean][grh]（与 Anthropic 的同事合作，借助 Claude）：同一组五个陈述的一次重写，分可读版 `grh/` 与紧凑版 `grh-compact/` 两个独立工程 [z643702366]。官方口径是"基于原证明的方法，很多步骤用别的论证证明" [D16]。
+- 社区仓库把原来的 `main` 移到分支 `alpoge`，把 `main` 换成可读版：换上时（`47fcde5`、`9211277`）的 `src` 与 grh-lean `72fead1:grh/src` 的 Git 树哈希相同（`55fe9c6c…`，本仓库核对）。
+- 新 `main` 上的清理已重新开始：批次 m1–m4（[#5631]、[#5636]、[#5645]、[#5657]）、剪枝 [#5652]、未用字段 [#5642]、升到 v4.37.0-rc1 [#5769]、challenge 文件检查 [#5615]。到 `b7642ae`（11-26 02:40 UTC），`src` 改了 445 个文件（+2,085 / −2,159 行，本仓库测）。
+
+### 新的核心判断
+
+1. **最大的削减不再来自逐步清理，而来自重写。** 定理 + 引理：原始 818,755 个，可读版 18,227 个，紧凑版 7,088 个；同期 `alpoge` 线到第 23 批是正文行 −23.3%、theorem/lemma 行 −30.3%（本仓库测）。逐步清理的上限约两到三倍，重写拿到了两个数量级（见 [grh-compact-vs-original](grh-compact-vs-original.md) 与 [`../methods/`](../methods/README.md)）。
+2. **验证的差别来自规模。** `alpoge` 线从未有过端到端核验；两个短版本发布当天就被 MIT 用六个检查器检查完，紧凑版的 `lake comparator --paranoid` 在两台机器上通过 [D18]。我们在断网沙箱里独立构建紧凑版通过，`#print axioms` 只有三条标准公理（[grh-compact-reliability](grh-compact-reliability.md) §6）。
+3. **新数学的风险转移了。** 短版本换了多处子论证（去掉奇点消解、Vandiver 弱形式、patching、Hida、局部 Langlands 等） [z643717520]，原始版本的核验不能转给它们；它们靠自己的核验，数学同样无人审阅。
+4. **社区以可读版为准。** 紧凑版难读，也有人批评它是在刷行数；可读版上清理从 A 层的机械路线重新开始（Anton Mellit 数出约 2.3 万个声明中 1,151 个未用 [z643723346]）。
+
+### 版本与验证
+
+规模一栏：文件为 Git 跟踪的 `.lean` 文件，行为总行数（本仓库测，`data/rh_revision_stats.csv`；两个短版本为 grh-lean 仓库里各自的目录）。验证一栏是他人报告，注明出处。
+
+| 版本 | 仓库与提交 | 规模 | 工具链 | 验证 |
+|---|---|---|---|---|
+| 原始 | 社区仓库 `original` 分支 `40e56bab`；冻结镜像 [D11] | 174,793 个文件、17,374,215 行 | v4.33.1 | 完整：MIT 全部模块编译、`#print axioms`、沙箱内重建并重新导出（与公开导出逐字节相同）、175,187 个模块的 `leanchecker` 重放、nanoda、con-leche / con-ron `--compare`、Lean 默认与 paranoid 内核、`lake comparator` 全流程 [D17]；Jack McCarthy 的 comparator 运行通过陈述比对、paranoid 内核与 nanoda [z643222049] |
+| grh-lean 可读版 | `lsernau/grh-lean` `grh/`，`72fead1` [D16] | 805 个文件、477,151 行 | v4.35.0 | 独立：MIT 沙箱构建 9,852 个任务零错误；`#print axioms`；803 / 803 模块重放；两机导出逐字节相同（4,485,867,644 字节）；con-leche / con-ron `--compare`；nanoda；默认与 paranoid 内核；lean4lean（2 小时 35 分，峰值 332 GB）；`lake comparator` 通过；单一流程的 `--paranoid` 一台已过 lean4lean 阶段、仍在收尾，另一台因内存保护被手动停止（不是拒绝） [D18]；Riccardo Brasca 的 nanoda 接受 [z643720223] |
+| 社区新 `main` | `9211277`（换上时）→ `b7642ae`（11-26 02:40 UTC） | 806 → 805 个文件；477,160 → 477,086 行 | v4.35.0 → v4.37.0-rc1 | 换上时与可读版源码相同，可读版的核验适用；之后的提交没有单独的端到端核验报告 |
+| grh-lean 紧凑版 | `lsernau/grh-lean` `grh-compact/`，`72fead1` [D16] | 794 个文件、约 11.4 万行 | v4.35.0 | 独立：MIT 全部检查通过，`lake comparator --paranoid` 在两台机器上给出 "Your solution is okay!" [D18]；本仓库在断网沙箱里构建通过（9,843 个任务，零错误），`#print axioms` 只有三条标准公理 |
+| `alpoge` 线（原 `main`） | 分支 `alpoge`，`756a702`（第 23 批） | 58,735 个文件、13,710,772 行（正文 11,217,763） | v4.37.0-rc1 | 只有构建：CI 分片构建（多数批次对着共享缓存增量构建）与每批的机械检查；五个陈述的文本与原始一致（本仓库测）；没有端到端核验 |
+| Shore 的机械裁剪 | `james-shore/rh-proof-trimmed` [D9] | 150,632 个文件、14,252,250 行（S4，作者统计） | v4.33.1 | 作者自报：每阶段完整构建、nanoda 接受、con-leche `--compare` 通过；无第三方复核 |
+| Devin Watson 的分解压缩 | 无公开仓库 | 自称 528,681 行 | — | 仅声称：结构去重、hash-consing、DAG 内联 [z643715299] |
+| riemann.verifytask.cn | — | 自称压缩约 50% | — | 仅声称；有人估算折算约 8%，最多 26% [z642818785] |
+| RH#120 文件合并 | PR [#120] | 自报 47,884 个文件 | — | 未通过：构建不过 [z642695795] |
+
+---
+
+以下是 `alpoge` 线（2026-11-20 至 11-25）的历史，写于切换之前。
+
+## `alpoge` 线当时的核心判断（截至 2026-11-25 上午）
+
+1. **（已过时，见 §0）当时最大的削减在社区主仓库 `main` 上，不在某个 fork。** 本仓库测：从原始归档 `40e56bab` 到 HEAD `75e2012`，`.lean` 文件 174,793 → 59,254（−66.1%），正文行 14,621,937 → 11,577,635（−20.8%），theorem/lemma 行 813,194 → 583,779（−28.2%）。总行数只少 11.6%（17,374,215 → 15,351,223），因为 import 行从 909,822 涨到 2,027,398（`import Mathlib` 被展开成逐个模块的导入）。五个最终定理的陈述文本与原始归档逐字一致。
 2. **文件数的削减主要是合并，不是删除。** #324 一次把 147,945 个文件变成 61,935 个：先删 22,054 个薄包装模块，再沿 import 图把小模块合并成大文件（"clump"），目的是降低每个文件的导入开销（约占编译 CPU 的一半）。真正删掉证明内容的，是 #66 的不可达裁剪、#221 和后续批次的复用与去重、#295 的同陈述去重、#243 的 linter 清理。
 3. **纯死代码基本已经删完，下一步要靠去重、换 Mathlib 和重写。** Shore 用内核证明项算出原始版本的依赖闭包：1,061,400 个项目声明中有 804,912 个被用到（75.8%），被用声明内部的源码 10,737,728 行（61.8%）。main 的 theorem/lemma 行已比原始少 28.2%，超过了"未用声明"所占的 24.2%；Shore 估计 main 上只剩约 1.5 万个未用声明。再往下需要去重、换成 Mathlib 引理、删掉没被证明的文献陈述（#318），或者换数学路线。
 4. **验证是最弱的一环。** 主干的保护是：CI 禁止改 Challenge 与 comparator 文件、批次检查不新增 `sorry`/`admit`/`axiom`、构建全绿（多数是对着缓存的增量构建）。完整的 comparator 和内核重放只在**原始版本**上做过；清理后的 `main` 没有报告过端到端的 comparator 或内核重放。所以 main 上的削减目前只能算"构建通过、陈述文本未变"，不算"独立复核过"。
 5. **进度很快，上限未知。** 据报告，过去 24 小时每分钟超过 1 个 PR，Kim Morrison 用带 AI 智能体的批处理合并，每批几十到一百多个 PR。有人估计每天删掉原始规模的约 5%；对最终能缩到多少，有人猜 80%–90%，Mario Carneiro 猜 98%–99.5%，但两者都只是猜测。当前 main 的依赖闭包没人量过。
 
-## 1. 主干在关键提交上的规模（本仓库测）
+## 1. `alpoge` 线在关键提交上的规模（本仓库测）
 
 | 提交 | 说明 | `.lean` 文件 | 总行 | 正文行 | import 行 | theorem/lemma 行 | 工具链 |
 |---|---|---|---|---|---|---|---|
@@ -23,7 +58,8 @@
 | `14f383e` | #66：升 4.36、转 module system、删不可达文件 | 149,104 | 15,179,048 | 12,306,612 | 841,881 | 663,842 | v4.36.0 |
 | `ecc801f^` | #185 升 4.37 rc1（展开 `import Mathlib`）与 #221 之后 | 147,945 | 20,569,125 | 12,047,636 | 6,428,170 | 659,933 | v4.37.0-rc1 |
 | `ecc801f` | #324：删薄包装、按 import 图合并模块 | 61,935 | 17,249,054 | 12,431,988 | 2,950,339 | 637,897 | v4.37.0-rc1 |
-| `75e2012` | HEAD，批次 b1–b15 之后 | 59,254 | 15,351,223 | 11,577,635 | 2,027,398 | 583,779 | v4.37.0-rc1 |
+| `75e2012` | 当时的 HEAD，批次 b1–b15 之后 | 59,254 | 15,351,223 | 11,577,635 | 2,027,398 | 583,779 | v4.37.0-rc1 |
+| `756a702` | 第 23 批（分支 `alpoge` 的当前头） | 58,735 | 13,710,772 | 11,217,763 | 817,983 | 566,775 | v4.37.0-rc1 |
 
 
 ## 2. 各项清理工作
@@ -165,5 +201,36 @@
 [z643474280]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/Cleaning.20up.20the.20proof/near/643474280
 [z642819551]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/Cleaning.20up.20the.20proof/near/642819551
 [repo]: https://github.com/leanprover-community/riemann-hypothesis
-[notes]: https://github.com/leanprover-community/riemann-hypothesis/blob/main/verification/NOTES.md
+[notes]: https://github.com/leanprover-community/riemann-hypothesis/blob/alpoge/verification/NOTES.md
 [z642652193]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/Cleaning.20up.20the.20proof/near/642652193
+[grh]: https://github.com/lsernau/grh-lean
+[#55]: https://github.com/leanprover-community/riemann-hypothesis/pull/55
+[#66]: https://github.com/leanprover-community/riemann-hypothesis/pull/66
+[#120]: https://github.com/leanprover-community/riemann-hypothesis/pull/120
+[#134]: https://github.com/leanprover-community/riemann-hypothesis/pull/134
+[#185]: https://github.com/leanprover-community/riemann-hypothesis/pull/185
+[#221]: https://github.com/leanprover-community/riemann-hypothesis/pull/221
+[#243]: https://github.com/leanprover-community/riemann-hypothesis/pull/243
+[#295]: https://github.com/leanprover-community/riemann-hypothesis/pull/295
+[#318]: https://github.com/leanprover-community/riemann-hypothesis/pull/318
+[#324]: https://github.com/leanprover-community/riemann-hypothesis/pull/324
+[#378]: https://github.com/leanprover-community/riemann-hypothesis/pull/378
+[#438]: https://github.com/leanprover-community/riemann-hypothesis/pull/438
+[#5615]: https://github.com/leanprover-community/riemann-hypothesis/pull/5615
+[#5631]: https://github.com/leanprover-community/riemann-hypothesis/pull/5631
+[#5636]: https://github.com/leanprover-community/riemann-hypothesis/pull/5636
+[#5642]: https://github.com/leanprover-community/riemann-hypothesis/pull/5642
+[#5645]: https://github.com/leanprover-community/riemann-hypothesis/pull/5645
+[#5652]: https://github.com/leanprover-community/riemann-hypothesis/pull/5652
+[#5657]: https://github.com/leanprover-community/riemann-hypothesis/pull/5657
+[#5769]: https://github.com/leanprover-community/riemann-hypothesis/pull/5769
+[D9]: ../REFERENCES.md
+[D11]: ../REFERENCES.md
+[D16]: ../REFERENCES.md
+[D17]: ../REFERENCES.md
+[D18]: ../REFERENCES.md
+[z643702366]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines/near/643702366
+[z643715299]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines/near/643715299
+[z643717520]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines/near/643717520
+[z643720223]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines/near/643720223
+[z643723346]: https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines/near/643723346
