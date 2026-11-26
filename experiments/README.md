@@ -1,6 +1,6 @@
 # 实验：在别的仓库上复现“展开—化简—再分块”
 
-**Summary (English).** Our own measured experiments: the staged compression process described for the large-repository case (mechanical cleanup, then unroll single-use lemmas into long flat proofs, simplify across the old lemma boundaries, fold back into lemmas where reuse really happens, then shorten) is run on other public Lean repositories, from a 3,000-line single file to repositories of several hundred thousand lines. Every stage passes the same gate (statement files frozen, headline statements fingerprinted against the challenge module, no new axioms, full offline build) and is recorded with what was done, how, how long it took and the numbers before and after. The first complete run (a 3,000-line file) ends at 589 code lines and 9 theorems from 2,902 and 96; 91% of the line reduction comes from the one stage in which sub-arguments were replaced. This page is the index by scale and provenance, with the status of each experiment, the findings so far, and the survey of candidate subjects. Tools are in [`../scripts/refold/`](../scripts/refold/), the environment in [`../docs/experiment-infra.md`](../docs/experiment-infra.md). The text is in Chinese.
+**Summary (English).** Our own measured experiments: the staged compression process described for the large-repository case (mechanical cleanup, then unroll single-use lemmas into long flat proofs, simplify across the old lemma boundaries, fold back into lemmas where reuse really happens, then shorten) is run on other public Lean repositories, from a 3,000-line single file to repositories of several hundred thousand lines. Every stage passes the same gate (statement files frozen, headline statements fingerprinted against the challenge module, no new axioms, full offline build) and is recorded with what was done, how, how long it took and the numbers before and after. The first complete run (a 3,000-line file) ends at 589 code lines and 9 theorems from 2,902 and 96; 91% of the line reduction comes from the one stage in which sub-arguments were replaced. The second (17,000 lines, same method) ends at 15,844 code lines from 17,236: the five-fold reduction does not carry over. This page is the index by scale and provenance, with the status of each experiment, the findings so far, and the survey of candidate subjects. Tools are in [`../scripts/refold/`](../scripts/refold/), the environment in [`../docs/experiment-infra.md`](../docs/experiment-infra.md). The text is in Chinese.
 
 状态日期：2026-11-26。**进行中**的实验只报已经过闸门的阶段；没做的写“未做”。
 
@@ -12,14 +12,15 @@
 4. **盲目的自动化替换收益很小。** 给每个多行证明块试一组收尾策略（`grind`、`simp_all`、`omega` 等，以及带上原证明块里出现的定理名的版本），219 个块里只有 24 个能被一行替换，省 3% 的代码行，一次探测要几十分钟。紧凑的写法来自知道该给自动化哪些事实，不来自逐块乱试。
 5. **行数的缩减来自换论证。** 第一个做完全流程的对象（3 千行）：2,902 → 589 代码行（4.9 倍），定理 96 → 9，定义 42 → 3；行数缩减的 91% 来自一个阶段，改写代理在那里把子论证本身换掉了（贪心 Hamming 码代替子集的 packing，一个覆盖函数代替一族矩阵定义，对普通函数的归纳代替证书结构体），用时 22 分钟，以闸门为验收。
 6. **大对象选定 `openai/NavierStokesAndEuler`，机械阶段值 1.3 倍。** 它整库 18 分钟建完，另一个候选（Mordell 加上它导入的 Stacks 模块，21,637 个模块）要 3 小时 17 分钟、96 核·时。整库删不可达声明两遍以后：定理 38,084 → 28,746，代码行 498,912 → 386,279，闸门通过。依赖图有三种看不见的依赖（`rfl` 证明的 `@[simp]` 引理、强制转换实例、`autoImplicit` 下的缺失名字），每一种都让一次尝试失败过。
-7. 更大对象上需要读数学的阶段还没做完，不在这里下结论。
+7. **小对象上的五倍不能外推。** 同一类提示词、同一个模型、同一道闸门，用在 1.7 万行的对象上：17,236 → 15,844 代码行（1.09 倍），2 小时 49 分钟。代理换掉了三处有现成短论证的地方（Markov 代替二阶矩、对边数归纳代替势函数、取平均代替逐点翻转），占全文一半以上的三大块长论证原样留下。定理 656 → 214 里 89% 来自脚本展开。
+8. 大对象上需要读数学的阶段还没做，不在这里下结论。
 
 ## 规模 × 来源
 
 | 规模 \ 来源 | 模型生成的证明（单文件） | 模型生成的大型开发（多文件） |
 |---|---|---|
 | 单个文件，约 3 千行 | [small-ramsey](small-ramsey/README.md)：**完成**，2,902 → 589 代码行，96 → 9 条定理 | — |
-| 单个文件，约 1.7 万行 | [small-compactness](small-compactness/README.md)：**进行中**，阶段 0–2 已过闸门 | — |
+| 单个文件，约 1.7 万行 | [small-compactness](small-compactness/README.md)：**完成**，17,236 → 15,844 代码行，656 → 214 条定理 | — |
 | 单个文件，约 3.4 万行 | [medium-nonsofic](medium-nonsofic/README.md)：**进行中** | — |
 | 仓库，数十万行 | — | [large-assessment](large-assessment/README.md)：两个候选的整库构建、依赖图与取舍，**完成**；选定的对象（NavierStokesAndEuler，50 万代码行）阶段 1 已过闸门，阶段 2 **进行中** |
 
@@ -41,7 +42,9 @@
 | small-compactness | 0 基线 | 17,236 | 656 | 273 | 455 | 172 | 28 | 上游文件原样 |
 | | 1 机械 | 17,219 | 654 | 272 | 453 | 172 | 36 | 删 3 个别名、3 个没用的实例参数、18 处风格提示 |
 | | 2 展开 | 17,245 | 242 | 272 | 116 | 4,071 | 140 | `unroll.py` |
-| | 3–5 | 进行中 | | | | | | 改写代理 |
+| | 3 化简 | 16,724 | 236 | 266 | 116 | 3,991 | 124 | 改写代理 |
+| | 4 再分块 | 16,225 | 214 | 261 | 99 | 3,747 | 96 | 改写代理（换了三处论证） |
+| | 5 压短 | 15,844 | 214 | 261 | 99 | 3,691 | 96 | 改写代理（主要是排版） |
 | NavierStokesAndEuler（整库） | 0 基线 | 498,912 | 38,084 | 11,822 | 13,586（可达部分） | — | 1,073（32 核） | 上游原样，2,657 个模块 |
 | | 1 机械 | 386,279 | 28,746 | 10,566 | — | — | — | `prune_unreachable.py` 两遍，删 10,629 个声明 |
 | | 2 展开 | 进行中 | | | | | | `unroll_project.py` |

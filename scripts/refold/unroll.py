@@ -455,6 +455,8 @@ def main():
     ap.add_argument("--max-rounds", type=int, default=30); ap.add_argument("--report")
     ap.add_argument("--skip", default=""); ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--retry", action="store_true", help="re-try each reverted inline on its own at the end")
+    ap.add_argument("--max-heartbeats", type=int, default=6400000,
+                    help="never raise a declaration's maxHeartbeats beyond this; undo inlines instead")
     a = ap.parse_args()
     u = Unroller(a.file, a.graph, a.headlines.split(","), [s for s in a.skip.split(",") if s])
     theorems = [d for d in u.decls.values() if d.kind == "theorem"]
@@ -501,8 +503,19 @@ def main():
             if "maximum number of heartbeats" in msg or "deterministic) timeout" in msg:
                 d = u.decls[t]
                 if (t, "hb") not in acted:
+                    acted.add((t, "hb"))
+                    if (d.heartbeats or 0) >= a.max_heartbeats:
+                        # the enlarged declaration does not fit any reasonable budget: undo its
+                        # largest inlined lemma instead of raising the limit again
+                        kids = [c for c in d.children if c in u.parent]
+                        if kids:
+                            big = max(kids, key=lambda c: u.decls[c].l1 - u.decls[c].l0)
+                            u.revert(big, "user exceeds the heartbeat cap")
+                            log.append({"round": rounds, "decl": big, "action": "revert", "in": t,
+                                        "error": "heartbeat cap %d reached" % a.max_heartbeats})
+                        continue
                     d.heartbeats = 400000 if d.heartbeats is None else d.heartbeats * 2
-                    acted.add((t, "hb")); log.append({"round": rounds, "decl": t, "action": "heartbeats", "value": d.heartbeats})
+                    log.append({"round": rounds, "decl": t, "action": "heartbeats", "value": d.heartbeats})
                 continue
             if o is None:
                 # error in the user's own text: undo the children mentioned on that line, else all
