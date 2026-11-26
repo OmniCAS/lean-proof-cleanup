@@ -1,8 +1,8 @@
 # block-contracts：先固定接口，再逐块专门改写
 
-**Summary (English).** Follow-up to [`small-compactness`](../small-compactness/README.md), where one rewriting run over a 17,000-line file removed 8% of the lines and left the large blocks untouched. Question: does dedicated effort per block move the number? Each large block gets a contract (the one theorem through which the rest of the file uses it, found as a dominator in the declaration graph) and its own rewriting run whose brief fixes only the contract: everything inside may be proved in any way, by a different mathematical argument and with anything in Mathlib. A block gate accepts a result when the file's gate passes, the contract's statement fingerprint is unchanged and every changed line lies inside the block. Recorded per block: lines and theorems before and after, time, tokens, builds, what argument replaced what, what was tried and given up, and whether the block resists because the mathematics is long or because the budget ran out. First result: the entropy block went from 1,446 lines and 31 declarations to 223 lines and 2 theorems in 52 minutes, by a more direct argument (no transfer step between sampling models, no smoothing); the other two runs are in progress. The text is in Chinese.
+**Summary (English).** Follow-up to [`small-compactness`](../small-compactness/README.md), where one rewriting run over a 17,000-line file removed 8% of the lines and left the large blocks untouched. Question: does dedicated effort per block move the number? Each large block gets a contract (the one theorem through which the rest of the file uses it, found as a dominator in the declaration graph) and its own rewriting run whose brief fixes only the contract: everything inside may be proved in any way, by a different mathematical argument and with anything in Mathlib. A block gate accepts a result when the file's gate passes, the contract's statement fingerprint is unchanged and every changed line lies inside the block. Recorded per block: lines and theorems before and after, time, tokens, builds, what argument replaced what, what was tried and given up, and whether the block resists because the mathematics is long or because the budget ran out. First result: the entropy block went from 1,446 lines and 31 declarations to 223 lines and 2 theorems in 52 minutes, by a more direct argument (no transfer step between sampling models, no smoothing); The upper-bound block went from 2,961 lines and 93 declarations to 706 lines and 32 in 63 minutes, by reorganising the supersaturation count (a vertex cover, one Jensen step, one injection). With both merged the file is at 12,427 code lines from 15,844. The third run is in progress. The text is in Chinese.
 
-状态：**进行中**（2026-11-27）。块与契约已固定；entropy 一块已完成并过闸门，upper 与 lower 在跑。
+状态：**进行中**（2026-11-27）。entropy 与 upper 两块已完成并过闸门，lower 在跑。
 
 ## 问题
 
@@ -34,10 +34,32 @@
 | 块 | 行（前 → 后） | 声明（前 → 后） | 比值 | 用时 | token | 构建 / 草稿检查 | 换成了什么 | 压不动的部分 |
 |---|---|---|---|---|---|---|---|---|
 | entropy | 1,446 → 223 | 31 → 2 | 6.5 | 52 分钟 | 29.3 万 | 7 / 约 30 | 见下 | 数学本身（四块各有不能省的理由） |
-| upper | 进行中 | | | | | | | |
+| upper | 2,961 → 706 | 93 → 32 | 4.2 | 63 分钟 | 31.8 万 | 7 / 约 22 | 见下 | 陈述里固定的编码（模板图是具体的和类型，逐情形验证），不是数学，也不是预算 |
 | lower | 进行中 | | | | | | | |
 
 行数含空行与注释；用时与 token 是改写代理一次运行的全部消耗（Claude Opus 5.5 子代理）。每个结果都拿回主工作副本重跑了块闸门。
+
+两块合并以后（各自的改动互不重叠，直接合并）在主工作副本过了闸门，三个契约的指纹都没变：文件 15,844 → 12,427 代码行，定理 214 → 187，定义 261 → 204，构建 96 → 97 秒。
+
+### upper：2,961 → 706 行
+
+契约：不含禁用族成员的 n 点图满足 e¹⁶ ≤ C·n²¹。原来的证明先取最大割再剪枝，得到最小度 d ≥ e/(2n) 的二部子图；再用围长 ≥ 8 做一个超饱和计数：数非回溯的 3-路与 4-路，按端点分纤维，重纤维上有立方量级的三元组质量，每个三元组对应 theta 构型，再分别用两个禁用图（记作 J、K）的商来限制数量。计数部分约 1,500 行，加上为它搭的路径、纤维、拷贝与粘合的定义。
+
+代理保留了数学骨架（J、K 两个商都用、一个立方的超饱和步骤），把计数的组织方式整个换掉。日志原样在 [`upper-log.md`](upper-log.md)：
+
+| 原来的做法 | 换成 |
+|---|---|
+| “坏顶点”的个数靠 3-路计数与最大度的界 | 顶点覆盖：好顶点（某个围长 8 的细分 K₃,₃ 的指定中心）由 K-自由性两两不相邻，所以 N·d ≤ 2·Σ_坏 deg |
+| 4-路按端点分纤维，重纤维（≥ p/(2N)）才计入 | 幂平均：Mathlib 的 `pow_sum_le_card_mul_sum_pow`（立方的 Jensen）加 `Nat.pow_sub_le_descFactorial` 与 `Fintype.card_embedding_eq` |
+| theta 计数、延拓的界、坏三元组的界，三条分开的引理 | 一个单射 (坏顶点 u, 远点 v, 单射三元组 x, w ∼ x₀) ↦ (x₁, x₂, w, 次序位)，由 J-自由性与 u 的坏性保证单射，一步给出 d·ΣΣT ≤ 2N³ |
+| 先造 theta 图与 gamma 图的拷贝再粘合，商用手写的核范式 | 直接从（基点、中心、中点）构型造 J、K 的同态，商用 `Function.invFun g ∘ g` |
+| 计数在 `Fin n` 上做，最小度子图要先搬到 `Fin N` | 计数对任意有限类型成立，直接用 `H.induce H.support` |
+
+常数：新论证得到 d¹⁶ ≤ 2²⁰·N⁵、e¹⁶ ≤ 2³⁶·n²¹，在契约固定的常数之内。四个存档阶段的块行数：2,961 → 912 → 789 → 717 → 706，每个都过块闸门。
+
+试过又放弃的：缩短最大割与剪枝的约化（Mathlib 没有最大割或最小度子图的结论；二部性去不掉，因为 J、K 的商要保持染色，二部二重覆盖不保持）；用 Mathlib 的 simp 引理去掉两条 `Nat.card` 桥接引理（会连带改写 `Fintype.card V`，为 11 行不值得）。纸面上排除的：只用 C₄、C₆-自由性只能得到 n^(4/3)，高于 n^(21/16)，所以绕不开 J、K 与立方计数。
+
+**判断：剩下的 706 行既不是数学长，也不是预算不够**（三小时用了 63 分钟）。论证本身现在一页纸能写完；长度来自陈述里固定的编码：J、K 模板是具体的和类型，同态、保持染色、逐拷贝单射都要逐情形验证（约 200 行）；围长 8 的事实（约 110 行）；二部最小度约化（约 95 行）。代理估计再做只是逐行打磨，值 50–100 行；最有希望的下一步是一条 J、K 共用的引理（从各分量的单射造保持染色的同态），约省 60–80 行。
 
 ### entropy：1,446 → 223 行
 
