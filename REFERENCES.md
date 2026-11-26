@@ -1,6 +1,6 @@
 # 参考文献与出处
 
-**Summary (English).** Numbered list of every public source used in this repository: papers [P], tools and documentation [T], datasets and repositories [D], and community records [C], each with venue, year, link and how closely we read it. Checked on 2026-11-25.
+**Summary (English).** Numbered list of every public source used in this repository: papers [P], tools and documentation [T], datasets and repositories [D], and community records [C], each with venue, year, link and how closely we read it. Checked on 2026-11-25; D16–D18, C5 and C6 added on 2026-11-26.
 
 文档里直接给出链接；本文件按类编号，方便核对。每条标明阅读程度：
 
@@ -136,12 +136,17 @@
 | D13 | Lean Refactor Arena | [HF Space delta-lab-ai/lean-refactor-arena](https://huggingface.co/spaces/delta-lab-ai/lean-refactor-arena) | 摘要 |
 | D14 | OmniCAS 的固定副本 | [OmniCAS/riemann-hypothesis](https://github.com/OmniCAS/riemann-hypothesis)、[OmniCAS/riemann-hypothesis-omega](https://github.com/OmniCAS/riemann-hypothesis-omega) | 摘要 |
 | D15 | Lean 分布式构建 | [OmniCAS/lean-distributed-build](https://github.com/OmniCAS/lean-distributed-build) | 全文 |
+| D16 | grh-lean：可读版 `grh/` 与紧凑版 `grh-compact/`（Luke Sernau 与 Anthropic 同事，借助 Claude；Apache-2.0，Copyright 2026 Anthropic, PBC） | [lsernau/grh-lean](https://github.com/lsernau/grh-lean)，提交 `72fead1` | 全文（两版源码统计、README、NOTICE、GUIDE、ATTRIBUTION） |
+| D17 | MIT 对原始版本的核验页（Andrew Sutherland） | [math.mit.edu/~drew/grh](https://math.mit.edu/~drew/grh/) | 摘要（按版本追踪整理） |
+| D18 | MIT 对两个短版本的核验页（Andrew Sutherland） | [math.mit.edu/~drew/shortgrh](https://math.mit.edu/~drew/shortgrh/) | 相关段落（页面 2026-11-26 02:13 UTC 版，02:48 UTC 读取） |
 
 ## C 社区记录
 
 | 编号 | 内容 | 链接 | 阅读程度 |
 |---|---|---|---|
-| C1 | 社区 RH 仓库的 PR：#45、#55、#57、#60、#66、#92、#120、#134、#185、#221、#243、#295、#318、#324、#378、#438，以及批次 #1198、#2318 | [pulls](https://github.com/leanprover-community/riemann-hypothesis/pulls?q=is%3Apr)；各 PR 在文档中单独链接 | 相关段落（#221、#295、#324、#438、#1198、#2318 读了说明；其余据 Zulip 与早先整理） |
+| C1 | 社区 RH 仓库 `alpoge` 线（原 `main`）的 PR：#4、#9、#38、#44、#45、#55、#57、#58、#60、#61、#66、#67、#71、#74、#75、#90、#92、#120、#134、#185、#221、#243、#250（issue）、#295、#312、#318、#324、#378、#389、#438、#1508，以及批次 #1198、#2318、#4761（b6、b15、b23） | [pulls](https://github.com/leanprover-community/riemann-hypothesis/pulls?q=is%3Apr)；各 PR 在文档中单独链接 | 相关段落（#221、#295、#324、#438、#1198、#2318 读了说明；其余据 Zulip 与早先整理） |
 | C2 | issue #3（文本追踪估计被更正为约 9%） | [issue #3](https://github.com/leanprover-community/riemann-hypothesis/issues/3) | 未重新核对 |
-| C3 | 社区仓库的核验记录与 CI | [verification/NOTES.md](https://github.com/leanprover-community/riemann-hypothesis/blob/main/verification/NOTES.md)、[challenge-files.yml](https://github.com/leanprover-community/riemann-hypothesis/blob/main/.github/workflows/challenge-files.yml) | 相关段落 |
+| C3 | 社区仓库的核验记录与 CI | [verification/NOTES.md](https://github.com/leanprover-community/riemann-hypothesis/blob/alpoge/verification/NOTES.md)、[challenge-files.yml](https://github.com/leanprover-community/riemann-hypothesis/blob/alpoge/.github/workflows/challenge-files.yml) | 相关段落 |
 | C4 | Lean Zulip "Riemann Hypothesis" 频道（2026-11-25 从 #general 迁入）："Cleaning up the proof"、"Why clean up the proof"、"Conserving the original proof"、"Discussion: Alpöge Proves the Riemann Hypothesis" 等话题 | [频道](https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis)；`docs/rh-community-cleanup.md` 按消息逐条链接（44 条） | 相关段落（2026-11-22 至 11-25 的公开消息） |
+| C5 | Lean Zulip "Riemann Hypothesis" 频道的 "New proof in 300k lines" 话题：grh-lean 作者对方法与改动的说明、各方的核验与统计 | [话题](https://leanprover.zulipchat.com/#narrow/channel/658556-Riemann-Hypothesis/topic/New.20proof.20in.20300k.20lines) | 相关段落（2026-11-25 21:26 至 11-26 02:49 UTC 的公开消息） |
+| C6 | 社区仓库新 `main`（可读版）上的 PR：批次 m1–m4（#5631、#5636、#5645、#5657）、剪枝 #5652、未用字段 #5642、升 v4.37.0-rc1 #5769、challenge 文件检查 #5615 | [main 的提交记录](https://github.com/leanprover-community/riemann-hypothesis/commits/main) | 相关段落（提交记录与 `data/rh_mainline_merges.csv`） |
