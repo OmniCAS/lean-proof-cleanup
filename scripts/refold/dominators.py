@@ -11,6 +11,10 @@ Usage: python3 dominators.py GRAPH.jsonl OUT.json --roots NAME [NAME ...] [--min
        [--show NAME]   also write the slice of NAME (the declarations it dominates, by module) to OUT.json.slice
        [--block FILE]  with --show: write the slice as a block file for block_gate.py (contract = NAME,
                        its declarations with line ranges, the merged line ranges per source file)
+       [--free-dead-users]  with --block: also put into the block the declarations that the headline
+                       theorems do not reach but that use a declaration of the block (directly or
+                       through other such declarations). Left-over dead code otherwise pins the
+                       statements it mentions; inside the block it may be changed or deleted.
 GRAPH.jsonl is written by lean/ProjectGraph.lean. Prints the largest dominators, with nested
 ones marked, and writes all dominators above the threshold to OUT.json.
 """
@@ -24,7 +28,7 @@ def main():
     ap.add_argument("graph"); ap.add_argument("out")
     ap.add_argument("--roots", nargs="+", required=True)
     ap.add_argument("--min-lines", type=int, default=1500); ap.add_argument("--top", type=int, default=40)
-    ap.add_argument("--show"); ap.add_argument("--block")
+    ap.add_argument("--show"); ap.add_argument("--block"); ap.add_argument("--free-dead-users", action="store_true")
     a = ap.parse_args()
     rows = [json.loads(l) for l in open(a.graph, encoding="utf-8") if l.startswith("{")]
     by_i = {r["i"]: r for r in rows}
@@ -129,6 +133,19 @@ def main():
               "modules": {m: dict(x, reachable_declarations_in_module=whole[m]) for m, x in sorted(mods.items())}}
         json.dump(sl, open(a.out + ".slice", "w"), indent=1)
         if a.block:
+            # declarations outside the headline closure that use a member of the block
+            pinned = sorted({by_i[w]["n"] for r in rows if r["i"] not in lines for w in r["u"] if w in set(members) and w != d})
+            dead = set()
+            if a.free_dead_users:
+                mem, grew = set(members), True
+                while grew:
+                    grew = False
+                    for r in rows:
+                        if r["i"] not in lines and r["i"] not in dead and any(w in mem or w in dead for w in r["u"]):
+                            dead.add(r["i"])
+                            grew = True
+            live = list(members)
+            members = live + sorted(dead)
             # line ranges per source file; neighbours separated by at most one line are merged
             # (lines between declarations may hold `variable`, `open` or `section` commands that
             # other declarations depend on, so wider gaps stay outside the block)
@@ -141,13 +158,18 @@ def main():
                     ranges[f].append([r["l0"], r["l1"]])
             users = sorted(v for v in lines if d in succ[v])
             json.dump({"contract": a.show, "contract_module": by_i[d]["m"],
-                       "declarations": [{"name": by_i[v]["n"], "kind": by_i[v]["k"], "module": by_i[v]["m"],
-                                         "line0": by_i[v]["l0"], "line1": by_i[v]["l1"]}
+                       "declarations": [dict({"name": by_i[v]["n"], "kind": by_i[v]["k"], "module": by_i[v]["m"],
+                                              "line0": by_i[v]["l0"], "line1": by_i[v]["l1"]},
+                                             **({"dead": True} if v in dead else {}))
                                         for v in sorted(members, key=lambda v: (by_i[v]["m"], by_i[v]["l0"]))],
+                       "pinned_by_dead_code": pinned,
                        "ranges": ranges,
                        "users_of_contract": [by_i[v]["n"] for v in users],
-                       "user_modules": sorted({by_i[v]["m"] for v in users})}, open(a.block, "w"), indent=1)
+                       "user_modules": sorted({by_i[v]["m"] for v in users} | {by_i[v]["m"] for v in dead})},
+                      open(a.block, "w"), indent=1)
             print("block file %s: %d line ranges in %d files" % (a.block, sum(len(x) for x in ranges.values()), len(ranges)))
+            print("   declarations of the block used by dead code outside it: %d; dead users put into the block: %d (%d lines)" % (
+                len(pinned), len(dead), sum(by_i[v]["l1"] - by_i[v]["l0"] + 1 for v in dead)))
         print("slice of %s: %d declarations, %d lines, %d theorems, in %d modules" % (
             a.show, sl["declarations"], sl["lines"], sl["theorems"], len(mods)))
         for m, x in sorted(mods.items()):

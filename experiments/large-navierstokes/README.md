@@ -1,8 +1,8 @@
 # large-navierstokes：50 万行的多文件生成开发，分阶段压缩
 
-**Summary (English).** The staged process on `openai/NavierStokesAndEuler` (model-generated, Apache-2.0, 2,657 modules, 498,912 code lines, 38,084 theorems; four headline theorems fixed by upstream challenge files), run on the build server. Two stages are done and gated on the whole project: pruning what the headline theorems do not reach (38,084 → 28,746 theorems, 498,912 → 386,279 code lines) and unrolling single-use lemmas module by module (28,746 → 22,005 theorems, code lines unchanged, longest proof 185 → 811 lines, clean build 17.9 → 19.2 minutes). Together: 1.29× in code lines, 1.73× in theorems, all of the line reduction from pruning. The stages that need the mathematics are run on sub-developments with a one-statement contract, chosen from the dominator tree of the declaration graph; three are set up and their rewriting runs are recorded here as they finish. The text is in Chinese.
+**Summary (English).** The staged process on `openai/NavierStokesAndEuler` (model-generated, Apache-2.0, 2,657 modules, 498,912 code lines, 38,084 theorems; four headline theorems fixed by upstream challenge files), run on the build server. Two stages are done and gated on the whole project: pruning what the headline theorems do not reach (38,084 → 28,746 theorems, 498,912 → 386,279 code lines) and unrolling single-use lemmas module by module (28,746 → 22,005 theorems, code lines unchanged, longest proof 185 → 811 lines, clean build 17.9 → 19.2 minutes). Together: 1.29× in code lines, 1.73× in theorems, all of the line reduction from pruning. The stages that need the mathematics are run on sub-developments with a one-statement contract, chosen from the dominator tree of the declaration graph; three are set up and their rewriting runs are recorded here as they finish. The first (`pulse`) went from 2,035 to 1,512 lines in 99 minutes (1.35×): its estimates are tight and no shorter route was found, in contrast to the 4–8× of the single-file blocks. It also showed that dead code left over from pruning pins statements inside a block; the block tool now puts such dead users into the block. The text is in Chinese.
 
-状态：阶段 1、2 **完成并过闸门**；按块改写（阶段 3–5）**进行中**（2026-11-26）。
+状态：阶段 1、2 **完成并过闸门**；按块改写（阶段 3–5）**进行中**，第一块已完成（2026-11-27）。
 
 ## 结论（到阶段 2 为止）
 
@@ -88,7 +88,39 @@
 | matching | `NavierStokes.MatchingDebtBounds.exists_ordered_matching_threshold` | 51（32） | 1,571 | 3 | 19 |
 | repair | `NavierStokes.ModulatedCone.Repaired.exists_with_moment_repair` | 123（88） | 3,067 | 10 | 45 |
 
-三个块各有一份服务器上的工作副本（各 8.4 GB，Mathlib 的构建产物共用），契约的指纹已在阶段 2 的状态上记录（分别 216、762、209 行指纹：契约的类型加上它提到的全部项目内常量）。改写运行的结果出来后记在这里。
+三个块各有一份服务器上的工作副本（各 8.4 GB，Mathlib 的构建产物共用），契约的指纹在阶段 2 的状态上记录（分别 216、762、209 行指纹：契约的类型加上它提到的全部项目内常量）。改写代理在本地编辑块的文件，构建、草稿检查与块闸门都经一个脚本在服务器上跑；一次“改动—增量构建”往返约半分钟。
+
+### 投入—压缩表
+
+| 块 | 行（前 → 后） | 声明（前 → 后） | 比值 | 用时（预算 3 小时） | token | 构建 / 草稿检查 / 闸门 | 剩下的为什么压不动 |
+|---|---|---|---|---|---|---|---|
+| pulse | 2,035 → 1,512 | 98 → 95 | 1.35 | 99 分钟 | 41.2 万 | 9 / 24 / 4 | 数学本身；另有 6 条陈述被块外的死代码钉住 |
+| matching | 进行中 | | | | | | |
+| repair | 未开始 | | | | | | |
+
+### pulse：2,035 → 1,512 行
+
+契约：存在一个小参数阈值 λ₀，使“脉冲段的出射应力锥”的四条不等式对每个重置见证、整个脉冲区间与物理参数带一致成立。日志原样在 [`pulse-log.md`](pulse-log.md)。
+
+代理先问了在别处起作用的那个问题：契约只要求存在阈值，能不能用更粗的估计？结论是不能。两条锥余量离理想值只有约 2%（最大值 0.726 对 0.74，1.66 对 1.68），所以方向比必须一致地算到 o(1)；这就逼出滞后的二阶展开、对参数导数的精细界、平衡点 O(λ²⁸) 的误差、系数 C ≤ 2.001 的精确值，以及与理想方向的比较。误差本来就极小的地方（能量与压力的历史项乘着 O(λ³⁰)），原证明已经是粗估。
+
+所以这一块的缩减全部来自局部：只证真正用到的那一半结论（删掉没用到的参数导数部分及其定义）；几条长估计改用显式的乘积证书重证（320 → 192、117 → 约 70、107 → 65、90 → 35 行）；一条重复的证明删掉；契约里嵌套 `min` 的阈值记账换成一个 `Filter.Eventually` 的合取。四个存档阶段：1,923、1,697、1,542、1,512 行，都过块闸门。
+
+试过又放弃的：更粗的锥论证（不可能，见上）；只做一阶滞后展开（余项除以 Qs ∼ λ 后是 O(1)）；对 ∂η 的粗界（在 η ∼ √λ 附近变成 O(1/√λ)）；把约 115 行的常数定义与正性引理并成一个总常数（估计省 50–60 行，要重证每一条界，没有做）。
+
+**判断：剩下的压不动是数学本身长，不是预算**（三小时用了 1 小时 40 分钟）。与单文件对象上三块 4–8 倍的结果相比，这一块只有 1.35 倍：这里的估计是紧的，没有可绕开的路。
+
+### 一个新问题：残留的死代码会钉住块内的陈述
+
+pulse 的运行发现，块内有 5 个声明（加上一个私有引理用到的定义）的陈述改不得：块外还有代码在用它们。按支配树的定义这不该发生。核对声明图以后：这些使用者都是**标题定理到不了的声明**，是阶段 1 保守保留下来的（带属性的、实例、名字仍被提到的、修复时恢复的，共 4,132 个）。它们不在标题定理的闭包里，支配树看不见；但它们所在的模块还要编译，所以被它们提到的陈述就动不了。
+
+| | 数量 |
+|---|---|
+| 阶段 2 之后仍留着的不可达声明 | 4,132 |
+| 被它们直接用到的可达声明 | 6,033（可达声明共 29,095，占 21%） |
+| 三个块里被这样钉住的声明 | pulse 5 / 98，matching 1 / 51，repair 17 / 123 |
+
+处理：[`dominators.py`](../../scripts/refold/dominators.py) 加了 `--free-dead-users`，把“不可达、且直接或间接用到块内声明”的声明也划进块里，改写时可以改也可以删；块闸门相应地多构建这些声明所在的模块。repair 块按这个办法重新生成：多划入 7 个死声明（434 行），原先被钉住的 17 条陈述全部放开，块变成 130 个声明、3,501 行。pulse 与 matching 是在没有这个选项时跑的。更彻底的办法是在阶段 1 再做一遍更细的删除，把这 4,132 个残留清掉；没有做。
 
 ## 机器成本（阶段 1、2）
 

@@ -119,6 +119,12 @@ def main():
                                env=dict(os.environ, REFOLD_REPO=REPO), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             print(g.stdout.decode("utf-8", "replace").strip())
             ok_build = ok_build and g.returncode == 0
+    if ok_build and not a.quick and any(x.get("dead") for x in block["declarations"]):
+        # dead-code users inside the block may live in modules the headline module does not import
+        p = subprocess.run(isolate() + ["lake", "build"] + block["user_modules"], cwd=REPO,
+                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        ok_build = p.returncode == 0
+        print("build of the %d modules holding users of the block: %s" % (len(block["user_modules"]), "ok" if ok_build else "FAILED"))
     ok_contract = ok_local = False
     if ok_build:
         # 2. contract
