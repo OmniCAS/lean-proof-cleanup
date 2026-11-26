@@ -1,8 +1,17 @@
 # block-contracts：先固定接口，再逐块专门改写
 
-**Summary (English).** Follow-up to [`small-compactness`](../small-compactness/README.md), where one rewriting run over a 17,000-line file removed 8% of the lines and left the large blocks untouched. Question: does dedicated effort per block move the number? Each large block gets a contract (the one theorem through which the rest of the file uses it, found as a dominator in the declaration graph) and its own rewriting run whose brief fixes only the contract: everything inside may be proved in any way, by a different mathematical argument and with anything in Mathlib. A block gate accepts a result when the file's gate passes, the contract's statement fingerprint is unchanged and every changed line lies inside the block. Recorded per block: lines and theorems before and after, time, tokens, builds, what argument replaced what, what was tried and given up, and whether the block resists because the mathematics is long or because the budget ran out. First result: the entropy block went from 1,446 lines and 31 declarations to 223 lines and 2 theorems in 52 minutes, by a more direct argument (no transfer step between sampling models, no smoothing); The upper-bound block went from 2,961 lines and 93 declarations to 706 lines and 32 in 63 minutes, by reorganising the supersaturation count (a vertex cover, one Jensen step, one injection). With both merged the file is at 12,427 code lines from 15,844. The third run is in progress. The text is in Chinese.
+**Summary (English).** Follow-up to [`small-compactness`](../small-compactness/README.md), where one rewriting run over a 17,000-line file removed 8% of the lines and left the large blocks untouched as "long genuine arguments". Question: does dedicated effort per block move the number? Each large block gets a contract (the one theorem through which the rest of the file uses it, found as a dominator in the declaration graph) and its own rewriting run whose brief fixes only the contract: everything inside may be proved in any way, by a different mathematical argument and with anything in Mathlib. A block gate accepts a result when the file's gate passes, the contract's statement fingerprint is unchanged and every changed line lies inside the block. **Result: it does.** The three blocks went from 1,446 to 223 lines, from 2,961 to 706 and from 3,914 to 488 (6.5×, 4.2×, 8.0×), each in about an hour of a three-hour budget; merged, the file is at 9,054 code lines from 15,844 (17,236 upstream) and 151 theorems from 214 (656 upstream), and passes the gate. In every block the old length came from a detour or from the choice of model, not from the mathematics; no run stopped for lack of budget. The new arguments were chosen by the model and are accepted only because Lean checks them. The text is in Chinese.
 
-状态：**进行中**（2026-11-27）。entropy 与 upper 两块已完成并过闸门，lower 在跑。
+状态：三块**完成**并合并过闸门（2026-11-27）；合并后的文件在 [`result/`](result/)。
+
+## 结论
+
+1. **专门投入能把数字压下去，而且压得很多。** 三块 8,321 行 → 1,417 行（5.9 倍），每块一次运行、约一小时；合并后全文件 15,844 → 9,054 代码行。此前对全文件的一次运行用了 2 小时 49 分钟，只去掉 1,392 行，并把这三块判为“实打实的长论证”。
+2. **那个判断三次都错了。** 三块的长度都来自绕路或模型的选择：entropy 是“先证独立情形、再带误差转移、边界再磨光”；upper 是计数的组织方式（路径、纤维、拷贝与粘合）；lower 是把宿主图取成辛广义四边形 W(q)（点与线是 K⁴ 的子模），而换成三元坐标的代数图 D(3,q) 之后，全部几何事实都是多项式恒等式。
+3. **没有一块是因为预算不够而停下的。** 三次运行各用了三小时预算里的 52、63、54 分钟，都是在判断“剩下的只是逐行打磨”时自己停的。
+4. **剩下的部分为什么压不动，三块三种原因。** entropy：数学本身（四个不能省的部分）。upper：陈述里固定的编码（模板图是具体的和类型，逐情形验证约 200 行）。lower：结构性的（J 的两侧是两种不同的几何；K 要奇特征、J 要特征 2，所以两族域与夹逼都得留；计数与补孤立点是陈述逼出来的）。
+5. **起作用的是三件事合在一起：** 块小到一次运行读得完、重推得动；接口只有一条定理，其余全部放开；提示词要求先在纸面上弄清这一块证的是什么、有没有更直接的路。闸门把“放开”变得安全：契约的陈述指纹、标题定理的指纹、公理、完整构建，四样都不变才收。
+6. **这是在做新的数学，验收只靠 Lean。** 换进来的论证是模型自己选的，没有人审过；能说的只是：陈述逐字未变，Lean 检查通过。
 
 ## 问题
 
@@ -31,15 +40,50 @@
 
 ### 投入—压缩表
 
-| 块 | 行（前 → 后） | 声明（前 → 后） | 比值 | 用时 | token | 构建 / 草稿检查 | 换成了什么 | 压不动的部分 |
+| 块 | 行（前 → 后） | 声明（前 → 后） | 比值 | 用时（预算 3 小时） | token | 整文件构建 / 草稿检查 | 换成了什么 | 剩下的为什么压不动 |
 |---|---|---|---|---|---|---|---|---|
-| entropy | 1,446 → 223 | 31 → 2 | 6.5 | 52 分钟 | 29.3 万 | 7 / 约 30 | 见下 | 数学本身（四块各有不能省的理由） |
-| upper | 2,961 → 706 | 93 → 32 | 4.2 | 63 分钟 | 31.8 万 | 7 / 约 22 | 见下 | 陈述里固定的编码（模板图是具体的和类型，逐情形验证），不是数学，也不是预算 |
-| lower | 进行中 | | | | | | | |
+| entropy | 1,446 → 223 | 31 → 2 | 6.5 | 52 分钟 | 29.3 万 | 7 / 约 30 | 对经验权重直接证，不经独立权重再转移；不用磨光 | 数学本身 |
+| upper | 2,961 → 706 | 93 → 32 | 4.2 | 63 分钟 | 31.8 万 | 7 / 约 22 | 计数重组：顶点覆盖、一步幂平均、一个单射 | 陈述里固定的编码，不是数学也不是预算 |
+| lower | 3,914 → 488 | 120 → 36 | 8.0 | 54 分钟 | 35.6 万 | 6 / 约 25 | 宿主图从 W(q) 换成 D(3,q) | 结构性原因，不是预算 |
+| 合计 | 8,321 → 1,417 | 244 → 70 | 5.9 | 169 分钟（两个并行，墙钟 1 小时 46 分钟） | 96.7 万 | | | |
 
-行数含空行与注释；用时与 token 是改写代理一次运行的全部消耗（Claude Opus 5.5 子代理）。每个结果都拿回主工作副本重跑了块闸门。
+行数含空行与注释；用时与 token 是改写代理一次运行的全部消耗（Claude Opus 5.5 子代理，每块一个）。三次运行的提示词结构相同；lower 启动得晚，提示里多了一句“另外两块的运行都发现原证明绕了路，更直接的论证短几倍”，entropy 与 upper 没有这句。对照：此前对全文件的一次运行，2 小时 49 分钟、40.4 万 token，17,236 → 15,844 代码行。
 
-两块合并以后（各自的改动互不重叠，直接合并）在主工作副本过了闸门，三个契约的指纹都没变：文件 15,844 → 12,427 代码行，定理 214 → 187，定义 261 → 204，构建 96 → 97 秒。
+### 合并后的文件
+
+三块的改动互不重叠，直接合并。每合并一块在主工作副本重跑一次闸门，并检查三个契约的陈述指纹：
+
+| 状态 | 行 | 代码行 | 定理 | 定义 | 只用一次的定理 | gzip 字节 | 构建（秒） | 闸门 |
+|---|---|---|---|---|---|---|---|---|
+| 起点（small-compactness 的结果） | 16,717 | 15,844 | 214 | 261 | 99 | 118,905 | 96 | 过 |
+| + entropy | 15,494 | 14,636 | 202 | 244 | 91 | 111,356 | 135 | 过 |
+| + upper | 13,239 | 12,427 | 187 | 204 | 87 | 98,169 | 97 | 过 |
+| + lower | 9,813 | 9,054 | 151 | 156 | 71 | 76,627 | 95 | 过 |
+
+从上游文件算起：17,236 → 9,054 代码行（1.90 倍），定理 656 → 151（4.3 倍），定义 273 → 156。这些数字目前只经过我们自己的闸门；第二方的独立检查（另起工程重建、重算陈述指纹）还没有做。完整指标在 [`metrics.jsonl`](metrics.jsonl)；文件、许可与改动说明在 [`result/`](result/)。
+
+剩下的 9,813 行里，三块占 1,417 行；块外的 8,396 行没有动，其中约 6,660 行是第二个开发的其余部分，它被标题定理 `twoDegenerateExtremalCounterexample` 本身支配（该定理的证明 3,691 行），没有更小的单定理接口。要继续，得先在那条长证明内部切出接口。
+
+### lower：3,914 → 488 行
+
+契约：禁用族的每个成员 F 满足 ex(n, F) ≥ 54^(−4/3)·n^(4/3)（n 充分大）。原来的证明取辛广义四边形 W(q) 的关联图作宿主：点与线是 K⁴ 的子模，用射影化计数；避开两类禁用图（记作 J、K）的商，靠辛自同构把两条线化成标准位置、线的对称矩阵坐标，再分特征 2 与奇特征论证；最后补孤立点、把 n 夹在素数幂之间。日志原样在 [`lower-log.md`](lower-log.md)。
+
+代理换了宿主图：代数图 D(3,q)（Wenger 图），点与线都是 K³ 里的三元组，点 (x,y,z) 在线 (a,b,c) 上当且仅当 b = xa − y 且 c = xb − z。
+
+| 原来的做法 | 换成 |
+|---|---|
+| W(q)：子模、射影化计数、(q+1)(q²+1) 个点与线 | D(3,q)：2q³ 个顶点、q⁴ 条边，V⁴ = 16E³ 恰好成立；取 q = tʲ（t = 2 或 3）夹逼得 n ≤ 54q³，正好是契约里固定的常数 |
+| 关联事实靠几何（两点至多一线、无三角形） | 全部是多项式恒等式：`grind` 的环求解器证关联恒等式，主要步骤是显式的 `linear_combination` |
+| 避开 K 的商（奇特征）：三条两两相对的线至多两条公共截线，靠辛自同构与坐标卡 | 过同一点的线相差 (a−a′)(1,x,x²)；极化恒等式在三个不同中心处给出两个基点相同；只用单射，不用围长 |
+| 避开 J 的商，线一侧（特征 2） | 同一恒等式取两个中心，加上特征 2 时 x ↦ x² 是单射 |
+| 避开 J 的商，点一侧 | 与一个中心共线的点构成一张平面，两个中心截出一条仿射直线，共线型在其上是 (λ−μ)·R ≠ 0 |
+| C₄、C₆-自由 | 直接由坐标证；六圈用一条“绕六边形走一圈”的短引理 |
+
+两个存档阶段：476 行（第一次替换，开始后约 40 分钟）与 488 行（整理命名、折行与文档注释后的最终版），都过块闸门。
+
+试过又放弃的：保留 W(q) 只缩短避开论证（纸面上放弃，约 600 行的搭建无论如何都在）；随机或删除法构造（密度不够，宿主得是围长 8、密度 n^(4/3) 的代数图；代理凭记忆引了文献里的结论，没有核对）；用 D(3,q) 在特征 2 时的一个交换两侧的自同构把 J 的两侧并成一侧（代理凭记忆认为这样的自同构不存在，没有核对，放弃）；一条覆盖两种朝向的抽取引理（约省 25 行，嫌抽象过度）。技术上的死路：对六圈做 64 路情形分析的 `grind` 超出步数上限，改用六边形引理。
+
+**判断：此前“约 2,700 行坐标计算是实打实的长论证”的结论不成立，长度来自模型的选择。** 剩下的 488 行压不动是结构性的：J 的两侧是两种不同的几何（点一侧是辛正则性，线一侧是特征 2 的二次锥），K 要奇特征而 J 要特征 2，所以两族域与夹逼都得留；计数、补点与“无孤立点”的代码是陈述逼出来的（`extremalNumber` 对有孤立点的图不单调）。代理估计还能省的不到 10%，都是表面的。预算不是限制（180 分钟用了约 53 分钟）。
 
 ### upper：2,961 → 706 行
 
